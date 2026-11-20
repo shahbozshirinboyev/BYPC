@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BYPC Studio — Build Your PC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#f3f6fa;--panel:#fff;--ink:#10202e;--mute:#66798a;--line:#dce4ec;--acc:#2b4cff;--acc2:#7b3ff2;--acc-ink:#fff;--ok:#0f8a5f;--bad:#c2410c;--bad-bg:#fff1e8;--ok-bg:#e7f7f0;--soft:#eef3fb}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 Onest,system-ui,sans-serif;background-image:radial-gradient(circle at 90% 0,rgba(43,76,255,.07),transparent 40%)}
+.wrap{max-width:1280px;margin:0 auto;padding:22px 20px 70px}
+.mono{font-family:"JetBrains Mono",monospace}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.logo{font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:-.04em}
+.logo b{color:var(--acc)}
+.logo small{display:block;font:500 10px "JetBrains Mono",monospace;letter-spacing:.22em;color:var(--mute)}
+.hero{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.prof{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:8px 16px;font:600 13px Onest;cursor:pointer;transition:.18s}
+.prof:hover,.prof.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.prof.on{box-shadow:0 4px 14px rgba(16,32,46,.2)}
+.budgetTop{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.budgetTop span{font-size:12px;color:var(--mute)}
+.budgetTop input{border:0;background:transparent;width:86px;font:700 14px "JetBrains Mono",monospace;color:var(--ink);outline:none}
+.tools{display:flex;gap:7px;flex-wrap:wrap}
+button{font:600 12px Onest,sans-serif;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;transition:.15s}
+button:hover{border-color:var(--acc);color:var(--acc)}
+button.main{background:var(--acc);border-color:var(--acc);color:#fff}
+button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.panel.recommend{margin-bottom:0;padding-bottom:18px}
+.recommend .phead{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-bottom:8px}
+.recommend .phead h3{margin:0}
+.recommend .phead .mini{font-size:10px}
+.profrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.layout{display:grid;grid-template-columns:200px 1fr 360px;gap:16px;align-items:start}
+@media(max-width:1180px){.layout{grid-template-columns:1fr}.steps,.right{position:static!important}}
+.steps{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px;position:sticky;top:16px}
+.sep{font:700 9px "JetBrains Mono",monospace;letter-spacing:.12em;color:var(--mute);border-top:1px dashed var(--line);margin:10px 8px 4px;padding-top:8px}
+.rigsep{border-top:1px dashed rgba(255,255,255,.22);margin:8px 2px}
+.steps h4{font:700 11px "JetBrains Mono",monospace;letter-spacing:.12em;color:var(--mute);margin:6px 8px 10px}
+.step{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:10px;cursor:pointer;transition:.15s}
+.step:hover{background:var(--soft)}
+.step.on{background:var(--ink);color:#fff}
+.step .n{width:21px;height:21px;flex:none;border-radius:7px;background:var(--soft);display:grid;place-items:center;font:700 10px "JetBrains Mono",monospace;color:var(--mute)}
+.step.on .n{background:rgba(255,255,255,.18);color:#fff}
+.step.done .n{background:var(--ok);color:#fff}
+.step b{font:600 12px Onest,sans-serif;flex:1}
+.step small{font:500 10px "JetBrains Mono",monospace;color:var(--mute);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.step.on small{color:#b9c7d6}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;min-height:530px}
+.stageHead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.tag{font:700 10px "JetBrains Mono",monospace;color:var(--acc);letter-spacing:.1em}
+h2{font:800 26px "Bricolage Grotesque",sans-serif;margin:2px 0 3px;letter-spacing:-.02em}
+.stageHead p{margin:0;color:var(--mute);font-size:13px}
+.cnt{font:700 11px "JetBrains Mono",monospace;color:var(--mute);background:var(--soft);padding:5px 9px;border-radius:99px;white-space:nowrap}
+.searchbar{margin:0 0 12px}.searchbar input{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit;outline:none}.searchbar input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(43,76,255,.12)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+.card{border:1px solid var(--line);border-radius:13px;padding:13px;background:var(--panel);cursor:pointer;transition:.16s;position:relative;overflow:hidden;min-height:112px;display:flex;flex-direction:column}
+.card:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 22px rgba(43,76,255,.1)}
+.card.sel{border-color:var(--acc);background:linear-gradient(135deg,rgba(43,76,255,.08),transparent);box-shadow:inset 0 0 0 1px var(--acc)}
+.card.no{opacity:.45;filter:grayscale(.5);cursor:not-allowed}
+.card.no:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.card .brand{font:700 9px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--acc2);text-transform:uppercase}
+.card .nm{font:600 13px Onest,sans-serif;line-height:1.35;margin:5px 0 auto}
+.card .sp{font:500 10px "JetBrains Mono",monospace;color:var(--mute);margin-top:7px;line-height:1.5}
+.card .pr{font:800 16px "Bricolage Grotesque",sans-serif;margin-top:8px}
+.card .why{font:600 10px Onest,sans-serif;color:var(--bad);background:var(--bad-bg);border-radius:6px;padding:3px 6px;margin-top:6px;display:inline-block}
+.card .unsel{position:absolute;top:7px;right:8px;width:23px;height:23px;border:0;border-radius:7px;background:rgba(43,76,255,.14);color:var(--acc);font-size:15px;line-height:1;padding:0;cursor:pointer}
+.card .unsel:hover{background:var(--bad);color:#fff}
+.stageFoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.stageFoot button:disabled{opacity:.35;cursor:default}
+.hintline{font-size:12px;color:var(--mute)}
+.right{position:sticky;top:16px;display:grid;gap:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.panel h3{font:800 14px "Bricolage Grotesque",sans-serif;margin:0 0 12px}
+.rig{background:linear-gradient(160deg,#14243a,#223f6b);border-radius:14px;padding:14px;position:relative;min-height:300px;overflow:hidden}
+.rigtitle{font:700 9px "JetBrains Mono",monospace;letter-spacing:.15em;color:#7fa6ff;padding-bottom:8px;margin-bottom:9px;border-bottom:1px solid rgba(255,255,255,.12)}
+.slot{border:0;background:rgba(255,255,255,.045);border-radius:8px;padding:5px 9px;margin-bottom:3px;cursor:pointer;transition:.15s;color:#cbd8e8}
+.slot:hover{background:rgba(255,255,255,.13)}
+.slot.filled{background:rgba(43,76,255,.35);box-shadow:inset 3px 0 0 #6f8dff;color:#fff}
+.slot b{display:block;font:700 10px "JetBrains Mono",monospace;letter-spacing:.08em}
+.slot span{display:block;font:500 10px "JetBrains Mono",monospace;opacity:.8;line-height:1.4}
+.pnum{font:800 28px "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:8px 0 2px}
+.pbar{height:6px;background:var(--soft);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0;transition:.25s}
+.mini{font-size:12px;color:var(--mute)}
+.kv{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.kv b{font-family:"JetBrains Mono",monospace}
+.msg{padding:7px 9px;border-radius:8px;font-size:12px;margin-top:6px}
+.msg.bad{background:var(--bad-bg);color:var(--bad)}
+.msg.good{background:var(--ok-bg);color:var(--ok)}
+.toolrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:11px;border-top:1px dashed var(--line)}
+.iconrow{display:flex;gap:6px}
+.toolrow .cur{margin-bottom:0;flex:none}
+.iconbtn{width:38px;height:38px;padding:0;display:grid;place-items:center;border-radius:10px;flex:none}
+.iconbtn svg{width:18px;height:18px;display:block}
+.iconbtn.small{width:28px;height:28px;border-radius:8px}
+.phead{display:flex;justify-content:space-between;align-items:center}
+.cur{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.cur button{border:0;border-radius:0;background:transparent}
+.cur button.on{background:var(--ink);color:#fff}
+.saved h3{margin-bottom:8px}
+.sitem{display:flex;gap:6px;align-items:center;margin-bottom:6px;font-size:12px}
+.sitem span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tableWrap{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.tableWrap summary{padding:13px 16px;font:700 13px Onest,sans-serif;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+.tableWrap summary::-webkit-details-marker{display:none}
+.tableWrap summary:after{content:"▾"}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;font:700 10px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--mute);padding:9px 12px;border-top:1px solid var(--line);background:var(--soft)}
+td{padding:9px 12px;border-top:1px solid var(--line)}
+td:last-child,th:last-child{text-align:right;font-family:"JetBrains Mono",monospace}
+td button{padding:3px 8px;font-size:11px}
+.note{color:var(--mute);font-size:11px;margin-top:16px}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:9px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+{% csrf_token %}
+  <div class="top">
+    <div class="logo"><b>BYPC</b> Studio<small>BUILD YOUR PC</small></div>
+  </div>
+
+  <div class="layout">
+    <aside class="steps" id="steps"><h4>BOSQICHLAR</h4><div id="steplist"></div></aside>
+
+    <main class="stage">
+      <div class="stageHead">
+        <div><div class="tag" id="steptag">STEP 01 / 12</div><h2 id="steptitle">CPU</h2><p id="stepdesc"></p></div>
+        <div class="cnt" id="stepcnt"></div>
+      </div>
+      <div class="searchbar"><input id="search" type="search" placeholder="Bu bosqichdagi qismlar ichida qidirish..." aria-label="Qidirish"></div>
+      <div class="cards" id="cards"></div>
+      <div class="stageFoot">
+        <span class="hintline" id="stephint"></span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button id="unselect" hidden>Olib tashlash</button>
+          <button id="prev">← Oldingi</button>
+          <button class="main" id="next">Keyingi →</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="right">
+      <div class="panel">
+        <h3>Yig’ma ko’rinishi</h3>
+        <div class="rig"><div class="rigtitle">BYPC // ASSEMBLY</div><div id="slots"></div></div>
+        <div class="pnum" id="total">$0</div>
+        <div class="pbar"><i id="pbarfill"></i></div>
+        <div class="mini" id="fit">0 / 8 qism tanlandi</div>
+        <div class="mini" id="power" style="margin-top:6px"></div>
+        <div class="toolrow"><div class="cur"><button id="usd" class="on">USD</button><button id="uzs">so’m</button></div><div class="iconrow"><button class="iconbtn" id="save" title="Saqlash" aria-label="Saqlash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg></button><button class="iconbtn" id="share" title="Ulashish" aria-label="Ulashish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.7 10.6l6.6-4M8.7 13.4l6.6 4"/></svg></button><button class="iconbtn" id="copy" title="Ro’yxatni nusxalash" aria-label="Ro’yxatni nusxalash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="iconbtn" id="reset" title="Tozalash" aria-label="Tozalash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10"/><path d="M8 13h8l2 7H6z"/><path d="M9 16v4M12 16v4M15 16v4"/></svg></button></div></div>
+        <div id="msgs"></div>
+      </div>
+        <section class="panel recommend">
+          <div class="phead"><h3>Tavsiya qilinadigan yig‘malar</h3><span class="mini">Maqsad bo‘yicha tayyor variantlar</span></div>
+          <div class="profrow">
+            <button class="prof" data-p="office">Ofis</button>
+            <button class="prof" data-p="gaming">O‘yin</button>
+            <button class="prof" data-p="power">Kuchli</button>
+          </div>
+        </section>
+            <div class="panel saved"><div class="phead"><h3>Saqlangan yig’malar</h3></div><div id="saveditems"><span class="mini">Hali yo’q</span></div></div>
+    </aside>
+  </div>
+
+
+  <details class="tableWrap">
+    <summary>Yig’ma jadvali — barcha qismlar va narxlar</summary>
+    <table><thead><tr><th>QISM</th><th>TANLANGAN</th><th>XUSUSIYAT</th><th>NARX</th><th></th></tr></thead><tbody id="tbody"></tbody></table>
+  </details>
+  <p class="note">Narxlar USD. Ustama va kurs <a href="/admin/">admin paneli</a> &rarr; SETTINGS dan sozlanadi.</p>
+</div>
+<div class="toast" id="toast"></div>
+
+{{ catalog|json_script:"catalog-data" }}
+<script>
+const DATA=JSON.parse(document.getElementById('catalog-data').textContent);
+const RATE={{ rate }};
+const MARKUP={{ markup }};
+const ROWS=[
+ {k:'cpu',t:'CPU',d:'Protsessor — soket butun yig’mani belgilaydi',req:1},
+ {k:'mb',t:'MB',d:'Ona plata — soket va RAM turiga qarab tanlanadi',req:1},
+ {k:'ram',t:'RAM',d:'Operativ xotira — plata qo’llaydigan turdagi bo’lishi kerak',req:1},
+ {k:'cool',t:'COOLER',d:'Sovutgich — CPU soketi va issiqligiga mos keladi',req:1},
+ {k:'gpu',t:'GPU',d:'Videokarta — korpus uzunligi va PSU quvvatiga bog’liq',req:1},
+ {k:'ssd',t:'SSD',d:'Tez xotira — NVMe uchun M.2 slot kerak',req:1},
+ {k:'psu',t:'PSU',d:'Quvvat bloki — CPU + GPU ga yetarli bo’lishi kerak',req:1},
+ {k:'case',t:'CASE',d:'Korpus — plata, GPU va sovutgich o’lchamiga mos',req:1},
+ {k:'hdd',t:'HDD',d:'Qo’shimcha xotira — ixtiyoriy',o:1},
+ {k:'mon',t:'MONITOR',d:'Monitor — ixtiyoriy',o:1},
+ {k:'kbm',t:'KB&M',d:'Klaviatura + sichqoncha — ixtiyoriy',o:1},
+ {k:'head',t:'HEADSET',d:'Quloqchin — ixtiyoriy',o:1},
+];
+const $=id=>document.getElementById(id);
+let cur='USD',sel={},step=0,query='',lastStep=-1;
+const get=k=>{const id=sel[k];return id==null?null:(DATA[k]||[]).find(x=>x.id===id)||null;};
+const arr=v=>String(v||'').split(',').map(x=>x.trim()).filter(Boolean);
+const money=u=>cur==='$'||cur==='USD'?'$'+Math.round(u).toLocaleString('en-US'):(Math.round(u*RATE/1000)*1000).toLocaleString('ru-RU')+' so‘m';
+const dollar=u=>'$'+Math.round(u).toLocaleString('en-US');
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2000);}
+function needWatt(){const c=get('cpu'),g=get('gpu');return(c||g)?Math.round(((c?c.watt:0)+(g?g.watt:0)+75)*1.3/50)*50:0;}
+function allowed(k){
+  let l=(DATA[k]||[]).slice();const c=get('cpu'),m=get('mb'),g=get('gpu'),co=get('cool'),cs=get('case');
+  if(k==='mb'&&c)l=l.filter(x=>x.socket===c.socket);
+  if(k==='ram'&&m)l=l.filter(x=>x.ram_type===m.ram_type);
+  if(k==='cool'&&c)l=l.filter(x=>arr(x.sockets).includes(c.socket)&&x.cooling_watt>=c.watt);
+  if(k==='gpu'&&cs&&cs.max_gpu_length)l=l.filter(x=>!x.length_mm||x.length_mm<=cs.max_gpu_length);
+  if(k==='case'){
+    if(m)l=l.filter(x=>arr(x.form_factors).includes(m.form_factor));
+    if(g)l=l.filter(x=>!x.max_gpu_length||!g.length_mm||g.length_mm<=x.max_gpu_length);
+    if(co)l=l.filter(x=>!x.max_cooler_height||!co.height_mm||co.height_mm<=x.max_cooler_height);
+  }
+  if(k==='ssd'&&m)l=l.filter(x=>m.m2_slots>0||x.interface!=='NVMe');
+  if(k==='psu'){const n=needWatt();if(n)l=l.filter(x=>x.watt>=n);}
+  return l;
+}
+function filterNote(k){
+  const c=get('cpu'),m=get('mb'),cs=get('case'),n=needWatt();
+  if(k==='mb'&&c)return 'Faqat '+c.socket+' soket — boshqa platalar yashirildi.';
+  if(k==='ram'&&m)return 'Faqat '+m.ram_type+' — plata boshqa xotirani qabul qilmaydi.';
+  if(k==='cool'&&c)return c.socket+' va kamida '+c.watt+' W sovutish talab qilinadi.';
+  if(k==='gpu'&&cs&&cs.max_gpu_length)return 'Korpus cheklovi: '+cs.max_gpu_length+' mm dan qisqa kartalar.';
+  if(k==='case'&&m)return 'Faqat '+m.form_factor+' platalar uchun mos korpuslar.';
+  if(k==='psu'&&n)return 'Kamida '+n+' W quvvat talab qilinadi.';
+  if(k==='ssd'&&m&&!m.m2_slots)return 'M.2 slot yo‘q — faqat SATA disklar.';
+  return 'Barcha mos variantlar ko‘rsatiladi.';
+}
+function specs(k,x){
+  const f={cpu:['socket','cores','watt'],mb:['socket','ram_type','form_factor'],ram:['ram_type','capacity_gb','speed_mhz'],
+   cool:['cooler_type','cooling_watt','height_mm'],gpu:['chipset','vram_gb','length_mm'],ssd:['interface','capacity_gb'],
+   hdd:['form_factor','capacity_gb','rpm'],psu:['watt','efficiency'],case:['case_type','form_factors'],
+   mon:['panel','size_inch','refresh_hz'],kbm:['connection','layout'],head:['connection','surround']};
+  return (f[k]||[]).map(a=>x[a]!=null&&x[a]!==''&&x[a]!==false?a+':'+x[a]:'').filter(Boolean).join('  ·  ');
+}
+function issues(){
+  const c=get('cpu'),m=get('mb'),r=get('ram'),co=get('cool'),g=get('gpu'),s=get('ssd'),p=get('psu'),cs=get('case'),o=[];
+  if(c&&m&&c.socket!==m.socket)o.push(['bad','CPU va MB soketlari mos emas.']);
+  if(m&&r&&m.ram_type!==r.ram_type)o.push(['bad','RAM turi platformaga mos emas.']);
+  if(c&&co&&(!arr(co.sockets).includes(c.socket)||co.cooling_watt<c.watt))o.push(['bad','Sovutgich yetarli emas.']);
+  if(m&&cs&&!arr(cs.form_factors).includes(m.form_factor))o.push(['bad','MB korpusga sig‘maydi.']);
+  if(g&&cs&&g.length_mm&&cs.max_gpu_length&&g.length_mm>cs.max_gpu_length)o.push(['bad','GPU korpusga sig‘maydi.']);
+  if(p&&needWatt()&&p.watt<needWatt())o.push(['bad','PSU quvvati yetarli emas.']);
+  return o;
+}
+function renderSteps(){
+  $('steplist').innerHTML=ROWS.map((r,i)=>(i===8?'<div class="sep">QO’SHIMCHA</div>':'')+'<div class="step '+(i===step?'on':'')+' '+(sel[r.k]!=null?'done':'')+'" data-i="'+i+'">'+
+   '<span class="n">'+(i+1)+'</span><b>'+r.t+'</b><small title="'+(get(r.k)?get(r.k).name:'')+'">'+(get(r.k)?get(r.k).name.slice(0,14):'—')+'</small></div>').join('');
+}
+function renderCards(){
+  if(lastStep!==step){query='';const si=$('search');if(si)si.value='';lastStep=step;}
+  const r=ROWS[step],ok=allowed(r.k),q=query.trim().toLowerCase();
+  const list=q?ok.filter(x=>(x.name+' '+(x.brand||'')+' '+specs(r.k,x)).toLowerCase().includes(q)):ok;
+  $('steptag').textContent='STEP '+String(step+1).padStart(2,'0')+' / '+ROWS.length;
+  $('steptitle').textContent=r.t;
+  $('stepdesc').textContent=r.d;
+  $('stepcnt').textContent=q?(list.length+' / '+ok.length+' topildi'):(ok.length+' ta mos');
+  $('stephint').textContent=(r.o?'Qo‘shish tavsiya etiladi. ':'Majburiy. ')+filterNote(r.k);
+  $('cards').innerHTML=list.length?list.map(x=>'<div class="card '+(sel[r.k]===x.id?'sel':'')+'" data-id="'+x.id+'">'+
+   (sel[r.k]===x.id?'<button class="unsel" data-unsel="1" title="Olib tashlash">×</button>':'')+'<span class="brand">'+(x.brand||'—')+'</span>'+
+   '<span class="nm">'+x.name+'</span><span class="sp">'+specs(r.k,x)+'</span>'+
+   '<span class="pr">'+money(x.price)+'</span></div>').join(''):'<p class="hintline">Mos variant topilmadi — qidiruvni yoki oldingi tanlovni o\'zgartiring.</p>';
+  $('unselect').hidden=sel[r.k]==null;
+  $('prev').disabled=step===0;$('next').textContent=step===ROWS.length-1?'Tugatish':'Keyingi →';
+}
+function renderRig(){
+  const shown=ROWS.filter(r=>!r.o||get(r.k)!=null);
+  $('slots').innerHTML=shown.map((r,i)=>{const x=get(r.k);
+    const firstOptional=!!r.o&&(i===0||!shown[i-1].o);
+    return (firstOptional?'<div class="rigsep"></div>':'')+
+    '<div class="slot '+(x?'filled':'')+'" data-k="'+r.k+'"><b>'+r.t+'</b><span>'+(x?x.name:'— tanlanmagan —')+'</span></div>'}).join('');
+}
+function update(){
+  let total=0;
+  ROWS.forEach(r=>{const x=get(r.k);if(x)total+=x.price;});
+  const mk=MARKUP,sale=mk?Math.round(total*(1+mk/100)/10)*10:total;
+  window._sale=sale;$('total').textContent=money(sale);
+  $('power').textContent=needWatt()?'Tavsiya etilgan PSU: ~'+needWatt()+' W':'';
+  const need=ROWS.filter(r=>r.req),done=need.filter(r=>sel[r.k]!=null).length;
+  $('pbarfill').style.width=(100*done/need.length)+'%';
+  $('fit').textContent=done+' / '+need.length+' majburiy qism tanlandi';
+  const bad=issues();
+  $('msgs').innerHTML=bad.length?bad.map(m=>'<div class="msg bad">'+m[1]+'</div>').join('')
+    :(done===need.length?'<div class="msg good">✓ Hamma qismlar o‘zaro mos</div>':'');
+  $('tbody').innerHTML=ROWS.map(r=>{const x=get(r.k);return '<tr><td><b>'+r.t+'</b></td><td>'+(x?x.name:'<span style="color:var(--mute)">tanlanmagan</span>')+
+    '</td><td style="color:var(--mute)">'+(x?specs(r.k,x):'—')+'</td><td>'+(x?dollar(x.price):'—')+'</td><td>'+
+    (x?'<button data-remove="'+r.k+'">×</button>':'')+'</td></tr>';}).join('');
+}
+function refresh(){
+  ROWS.forEach(r=>{const ok=allowed(r.k);if(sel[r.k]!=null&&!ok.some(x=>x.id===sel[r.k]))sel[r.k]=null;});
+  renderSteps();renderCards();renderRig();update();
+}
+function choose(id){if(!id)return;const r=ROWS[step],v=+id;if(sel[r.k]===v){sel[r.k]=null;refresh();toast(r.t+' tanlovi olib tashlandi');return;}sel[r.k]=v;toast(r.t+' tanlandi');if(step<ROWS.length-1)step++;refresh();}
+function go(i){step=Math.max(0,Math.min(ROWS.length-1,i));refresh();}
+function cheapest(k,pred){return((DATA[k]||[]).filter(pred||(()=>true)).sort((a,b)=>a.price-b.price)[0])||null;}
+function autoBuild(){
+  sel={};const c=cheapest('cpu');sel.cpu=c.id;
+  const m=cheapest('mb',x=>x.socket===c.socket);sel.mb=m.id;
+  const r=cheapest('ram',x=>x.ram_type===m.ram_type);sel.ram=r.id;
+  const co=cheapest('cool',x=>arr(x.sockets).includes(c.socket)&&x.cooling_watt>=c.watt);sel.cool=co.id;
+  const g=cheapest('gpu',x=>x.price>0);sel.gpu=g.id;
+  const s=cheapest('ssd',x=>m.m2_slots>0||x.interface!=='NVMe');sel.ssd=s.id;
+  const cs=cheapest('case',x=>arr(x.form_factors).includes(m.form_factor)&&(!x.max_gpu_length||!g.length_mm||g.length_mm<=x.max_gpu_length)&&(!x.max_cooler_height||!co.height_mm||co.height_mm<=x.max_cooler_height));sel.case=cs.id;
+  sel.psu=cheapest('psu',x=>x.watt>=needWatt()).id;
+  sel.mon=cheapest('mon').id;sel.kbm=cheapest('kbm').id;sel.head=cheapest('head').id;
+  step=0;refresh();toast('Eng arzon mos yig‘ma tuzildi');
+}
+const PROF={office:{cpu:0,mb:0,ram:2,cool:1,gpu:1,ssd:1,hdd:null,psu:1,case:1,mon:0,kbm:0,head:null},
+ gaming:{cpu:2,mb:3,ram:5,cool:2,gpu:3,ssd:2,hdd:null,psu:3,case:2,mon:0,kbm:0,head:0},
+ power:{cpu:5,mb:5,ram:5,cool:3,gpu:5,ssd:3,hdd:null,psu:4,case:3,mon:0,kbm:0,head:1}};
+function profile(name){
+  const p=PROF[name];sel={};
+  Object.keys(p).forEach(k=>{const item=(DATA[k]||[])[p[k]];if(item)sel[k]=item.id;});
+  document.querySelectorAll('.prof').forEach(b=>b.classList.toggle('on',b.dataset.p===name));
+  step=0;refresh();toast(name==='office'?'Ofis yig‘masi':name==='gaming'?'O‘yin yig‘masi':'Kuchli yig‘ma');
+}
+function reset(){sel={};step=0;document.querySelectorAll('.prof').forEach(b=>b.classList.remove('on'));refresh();toast('Tozalandi');}
+function post(url,body){return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify(body||{})});}
+async function save(){
+  const n=prompt('Yig‘ma nomi:','Mening PCim');if(!n)return;
+  const r=await post('/api/builds/save/',{name:n,data:{s:sel},total:window._sale||0});
+  toast(r.ok?'Saqlandi':'Saqlanmadi');saved();
+}
+async function saved(){
+  const r=await fetch('/api/builds/list/');const j=await r.json();
+  $('saveditems').innerHTML=j.items.length?j.items.map(b=>'<div class="sitem"><span title="'+b.name+'">'+b.name+' · $'+b.total+'</span><button data-l="'+b.id+'">→</button><button data-d="'+b.id+'">×</button></div>').join(''):'<span class="mini">Hali yo‘q</span>';
+}
+function share(){
+  const o={s:sel};
+  location.hash=btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+  if(navigator.clipboard)navigator.clipboard.writeText(location.href).then(()=>toast('Havola nusxalandi')).catch(()=>toast('Havola tayyor'));
+}
+function setCur(c){cur=c;$('usd').classList.toggle('on',c==='USD');$('uzs').classList.toggle('on',c!=='USD');update();}
+refresh();saved();
+if(location.hash.length>5){try{const o=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1)))));
+  sel=o.s||{};refresh();}catch(e){}}
+$('cards').addEventListener('click',e=>{if(e.target.closest('[data-unsel]')){const k=ROWS[step].k;sel[k]=null;refresh();toast('Tanlov olib tashlandi');return;}const c=e.target.closest('.card');if(c)choose(c.dataset.id);});
+$('steplist').addEventListener('click',e=>{const s=e.target.closest('.step');if(s)go(+s.dataset.i);});
+$('slots').addEventListener('click',e=>{const s=e.target.closest('.slot');if(s){const i=ROWS.findIndex(r=>r.k===s.dataset.k);if(i>=0)go(i);}});
+$('tbody').addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(b){sel[b.dataset.remove]=null;refresh();}});
+$('saveditems').addEventListener('click',async e=>{
+  const a=e.target.closest('[data-l]'),d=e.target.closest('[data-d]');
+  if(a){const r=await post('/api/builds/load/'+a.dataset.l+'/');const j=await r.json();
+    if(j.data){sel=j.data.s||{};refresh();toast(j.name+' yuklandi');}}
+  if(d){await post('/api/builds/delete/'+d.dataset.d+'/');saved();}
+});
+$('steplist').parentNode.addEventListener('click',e=>{if(e.target.tagName==='H4')go(0);});
+$('search').oninput=e=>{query=e.target.value;renderCards();};
+$('unselect').onclick=()=>{const k=ROWS[step].k;if(sel[k]!=null){sel[k]=null;refresh();toast('Tanlov olib tashlandi');}};
+$('prev').onclick=()=>go(step-1);$('next').onclick=()=>go(step+1);
+$('reset').onclick=reset;
+$('save').onclick=save;$('share').onclick=share;
+$('usd').onclick=()=>setCur('USD');$('uzs').onclick=()=>setCur('UZS');
+
+document.querySelectorAll('.prof').forEach(b=>b.onclick=()=>profile(b.dataset.p));
+$('copy').onclick=async()=>{let t='BYPC — Mening kompyuterim:\n';ROWS.forEach(r=>{const x=get(r.k);if(x)t+=r.t+': '+x.name+' ('+dollar(x.price)+')\n';});
+ t+='Jami: '+(window._sale?dollar(window._sale):'$0');try{await navigator.clipboard.writeText(t);toast('Nusxalandi');}catch(e){toast('Nusxalab bo‘lmadi');}};
+</script>
+</body>
+</html>

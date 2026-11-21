@@ -3,22 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BYPC Studio — Build Your PC</title>
+<title>{{ mode_label }} — BYPC</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+{% include 'builder/_theme_init.html' %}
 <style>
-:root{--bg:#f3f6fa;--panel:#fff;--ink:#10202e;--mute:#66798a;--line:#dce4ec;--acc:#2b4cff;--acc2:#7b3ff2;--acc-ink:#fff;--ok:#0f8a5f;--bad:#c2410c;--bad-bg:#fff1e8;--ok-bg:#e7f7f0;--soft:#eef3fb}
+{% include 'builder/_theme_style.html' %}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 Onest,system-ui,sans-serif;background-image:radial-gradient(circle at 90% 0,rgba(43,76,255,.07),transparent 40%)}
+html{scroll-behavior:smooth}
+body{margin:0;padding-top:72px;background:var(--bg);color:var(--ink);font:400 14px/1.5 Onest,system-ui,sans-serif;background-image:radial-gradient(circle at 90% 0,rgba(43,76,255,.07),transparent 40%)}
 .wrap{max-width:1280px;margin:0 auto;padding:22px 20px 70px}
 .mono{font-family:"JetBrains Mono",monospace}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
-.logo{font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:-.04em}
-.logo b{color:var(--acc)}
-.logo small{display:block;font:500 10px "JetBrains Mono",monospace;letter-spacing:.22em;color:var(--mute)}
+{% include 'builder/_navbar_style.html' %}
 .hero{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .prof{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:8px 16px;font:600 13px Onest;cursor:pointer;transition:.18s}
-.prof:hover,.prof.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.prof:hover,.prof.on{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
 .prof.on{box-shadow:0 4px 14px rgba(16,32,46,.2)}
 .budgetTop{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
 .budgetTop span{font-size:12px;color:var(--mute)}
@@ -26,8 +25,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 Onest,syst
 .tools{display:flex;gap:7px;flex-wrap:wrap}
 button{font:600 12px Onest,sans-serif;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;transition:.15s}
 button:hover{border-color:var(--acc);color:var(--acc)}
-button.main{background:var(--acc);border-color:var(--acc);color:#fff}
-button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+button.main{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+button.on{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
 .panel.recommend{margin-bottom:0;padding-bottom:18px}
 .recommend .phead{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-bottom:8px}
 .recommend .phead h3{margin:0}
@@ -35,16 +34,16 @@ button.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .profrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .layout{display:grid;grid-template-columns:200px 1fr 360px;gap:16px;align-items:start}
 @media(max-width:1180px){.layout{grid-template-columns:1fr}.steps,.right{position:static!important}}
-.steps{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px;position:sticky;top:16px}
+.steps{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px;position:sticky;top:80px}
 .sep{font:700 9px "JetBrains Mono",monospace;letter-spacing:.12em;color:var(--mute);border-top:1px dashed var(--line);margin:10px 8px 4px;padding-top:8px}
 .rigsep{border-top:1px dashed rgba(255,255,255,.22);margin:8px 2px}
 .steps h4{font:700 11px "JetBrains Mono",monospace;letter-spacing:.12em;color:var(--mute);margin:6px 8px 10px}
 .step{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:10px;cursor:pointer;transition:.15s}
 .step:hover{background:var(--soft)}
-.step.on{background:var(--ink);color:#fff}
+.step.on{background:var(--ink);color:var(--on-ink)}
 .step .n{width:21px;height:21px;flex:none;border-radius:7px;background:var(--soft);display:grid;place-items:center;font:700 10px "JetBrains Mono",monospace;color:var(--mute)}
-.step.on .n{background:rgba(255,255,255,.18);color:#fff}
-.step.done .n{background:var(--ok);color:#fff}
+.step.on .n{background:rgba(127,127,127,.25);color:var(--on-ink)}
+.step.done .n{background:var(--ok);color:var(--on-ok)}
 .step b{font:600 12px Onest,sans-serif;flex:1}
 .step small{font:500 10px "JetBrains Mono",monospace;color:var(--mute);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .step.on small{color:#b9c7d6}
@@ -67,18 +66,19 @@ h2{font:800 26px "Bricolage Grotesque",sans-serif;margin:2px 0 3px;letter-spacin
 .card .pr{font:800 16px "Bricolage Grotesque",sans-serif;margin-top:8px}
 .card .why{font:600 10px Onest,sans-serif;color:var(--bad);background:var(--bad-bg);border-radius:6px;padding:3px 6px;margin-top:6px;display:inline-block}
 .card .unsel{position:absolute;top:7px;right:8px;width:23px;height:23px;border:0;border-radius:7px;background:rgba(43,76,255,.14);color:var(--acc);font-size:15px;line-height:1;padding:0;cursor:pointer}
-.card .unsel:hover{background:var(--bad);color:#fff}
+.card .unsel:hover{background:var(--bad);color:var(--on-bad)}
 .stageFoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
 .stageFoot button:disabled{opacity:.35;cursor:default}
 .hintline{font-size:12px;color:var(--mute)}
-.right{position:sticky;top:16px;display:grid;gap:12px}
+.right{position:sticky;top:80px;display:grid;gap:12px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
 .panel h3{font:800 14px "Bricolage Grotesque",sans-serif;margin:0 0 12px}
-.rig{background:linear-gradient(160deg,#14243a,#223f6b);border-radius:14px;padding:14px;position:relative;min-height:300px;overflow:hidden}
-.rigtitle{font:700 9px "JetBrains Mono",monospace;letter-spacing:.15em;color:#7fa6ff;padding-bottom:8px;margin-bottom:9px;border-bottom:1px solid rgba(255,255,255,.12)}
-.slot{border:0;background:rgba(255,255,255,.045);border-radius:8px;padding:5px 9px;margin-bottom:3px;cursor:pointer;transition:.15s;color:#cbd8e8}
+.rig{background:linear-gradient(160deg,var(--rig-from),var(--rig-to));border-radius:14px;padding:14px;position:relative;min-height:300px;overflow:hidden}
+.mode-aio .rig{min-height:0}
+.rigtitle{font:700 9px "JetBrains Mono",monospace;letter-spacing:.15em;color:var(--rig-title);padding-bottom:8px;margin-bottom:9px;border-bottom:1px solid rgba(255,255,255,.12)}
+.slot{border:0;background:rgba(255,255,255,.045);border-radius:8px;padding:5px 9px;margin-bottom:3px;cursor:pointer;transition:.15s;color:var(--rig-text)}
 .slot:hover{background:rgba(255,255,255,.13)}
-.slot.filled{background:rgba(43,76,255,.35);box-shadow:inset 3px 0 0 #6f8dff;color:#fff}
+.slot.filled{background:rgba(43,76,255,.35);box-shadow:inset 3px 0 0 var(--rig-accent);color:#fff}
 .slot b{display:block;font:700 10px "JetBrains Mono",monospace;letter-spacing:.08em}
 .slot span{display:block;font:500 10px "JetBrains Mono",monospace;opacity:.8;line-height:1.4}
 .pnum{font:800 28px "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:8px 0 2px}
@@ -99,7 +99,7 @@ h2{font:800 26px "Bricolage Grotesque",sans-serif;margin:2px 0 3px;letter-spacin
 .phead{display:flex;justify-content:space-between;align-items:center}
 .cur{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:10px}
 .cur button{border:0;border-radius:0;background:transparent}
-.cur button.on{background:var(--ink);color:#fff}
+.cur button.on{background:var(--ink);color:var(--on-ink)}
 .saved h3{margin-bottom:8px}
 .sitem{display:flex;gap:6px;align-items:center;margin-bottom:6px;font-size:12px}
 .sitem span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -113,24 +113,32 @@ td{padding:9px 12px;border-top:1px solid var(--line)}
 td:last-child,th:last-child{text-align:right;font-family:"JetBrains Mono",monospace}
 td button{padding:3px 8px;font-size:11px}
 .note{color:var(--mute);font-size:11px;margin-top:16px}
-.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:9px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+#builder,#recommend,#table{scroll-margin-top:90px}
+.info{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;scroll-margin-top:90px}
+.info h2{font:800 20px "Bricolage Grotesque",sans-serif;margin:0 0 12px}
+.faq details{border-top:1px dashed var(--line);padding:10px 0}
+.linkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:9px;padding:14px 16px}
+.linkgrid div{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.linkgrid b{display:block;font:700 11px "JetBrains Mono",monospace;color:var(--acc);margin-bottom:4px}
+.linkgrid span{font-size:12px;color:var(--mute);line-height:1.4}
+.faq summary{cursor:pointer;font-weight:600;font-size:13px}
+.faq p{margin:6px 0 0;color:var(--mute);font-size:13px}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--ink);color:var(--on-ink);padding:11px 18px;border-radius:9px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:9}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
-<body>
+<body class="{% if mode == 'aio' %}mode-aio{% endif %}">
+{% include 'builder/_navbar.html' %}
+
 <div class="wrap">
 {% csrf_token %}
-  <div class="top">
-    <div class="logo"><b>BYPC</b> Studio<small>BUILD YOUR PC</small></div>
-  </div>
-
-  <div class="layout">
+  <div class="layout" id="builder">
     <aside class="steps" id="steps"><h4>BOSQICHLAR</h4><div id="steplist"></div></aside>
 
     <main class="stage">
       <div class="stageHead">
         <div><div class="tag" id="steptag">STEP 01 / 12</div><h2 id="steptitle">CPU</h2><p id="stepdesc"></p></div>
-        <div class="cnt" id="stepcnt"></div>
+        <div style="display:flex;gap:6px"><div class="cnt" id="modecnt" style="color:var(--acc);background:rgba(43,76,255,.09)">{{ mode_label }}</div><div class="cnt" id="stepcnt"></div></div>
       </div>
       <div class="searchbar"><input id="search" type="search" placeholder="Bu bosqichdagi qismlar ichida qidirish..." aria-label="Qidirish"></div>
       <div class="cards" id="cards"></div>
@@ -155,7 +163,7 @@ td button{padding:3px 8px;font-size:11px}
         <div class="toolrow"><div class="cur"><button id="usd" class="on">USD</button><button id="uzs">so’m</button></div><div class="iconrow"><button class="iconbtn" id="save" title="Saqlash" aria-label="Saqlash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg></button><button class="iconbtn" id="share" title="Ulashish" aria-label="Ulashish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.7 10.6l6.6-4M8.7 13.4l6.6 4"/></svg></button><button class="iconbtn" id="copy" title="Ro’yxatni nusxalash" aria-label="Ro’yxatni nusxalash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="iconbtn" id="reset" title="Tozalash" aria-label="Tozalash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10"/><path d="M8 13h8l2 7H6z"/><path d="M9 16v4M12 16v4M15 16v4"/></svg></button></div></div>
         <div id="msgs"></div>
       </div>
-        <section class="panel recommend">
+        <section class="panel recommend" id="recommend">
           <div class="phead"><h3>Tavsiya qilinadigan yig‘malar</h3><span class="mini">Maqsad bo‘yicha tayyor variantlar</span></div>
           <div class="profrow">
             <button class="prof" data-p="office">Ofis</button>
@@ -168,11 +176,36 @@ td button{padding:3px 8px;font-size:11px}
   </div>
 
 
-  <details class="tableWrap">
+  <details class="tableWrap" id="table">
     <summary>Yig’ma jadvali — barcha qismlar va narxlar</summary>
     <table><thead><tr><th>QISM</th><th>TANLANGAN</th><th>XUSUSIYAT</th><th>NARX</th><th></th></tr></thead><tbody id="tbody"></tbody></table>
   </details>
   <p class="note">Narxlar USD. Ustama va kurs <a href="/admin/">admin paneli</a> &rarr; SETTINGS dan sozlanadi.</p>
+
+  <section class="info" id="faq">
+    <h2>Ko‘p so‘raladigan savollar</h2>
+    <div class="faq">
+      <details><summary>Qismlar qanday filtrlanadi?</summary><p>Har bir tanlovdan keyin keyingi bosqich faqat mos keladigan qismlarni ko‘rsatadi: soket, RAM turi, korpus o‘lchami va PSU quvvati hisobga olinadi.</p></details>
+      <details><summary>Narxlar qayerdan olinadi?</summary><p>Katalog narxlari admin paneliga kiritilgan ma’lumotlardan olinadi. Ustama foizi va dollar kursi SETTINGS orqali boshqariladi.</p></details>
+      <details><summary>Yig‘mani qanday saqlash mumkin?</summary><p>“Saqlash” tugmasi yig‘mani brauzerga yozadi, “Ulashish” esa tanlovni havola orqali yuborish imkonini beradi.</p></details>
+    </div>
+  </section>
+
+  <details class="tableWrap" id="links">
+    <summary>Qismlar bog'liqligi — qaysi tanlov qaysi qismni cheklaydi</summary>
+    <div class="linkgrid">
+      <div><b>AIO → CPU</b><span>Chipset soketni belgilaydi: H61→LGA1155, H81→LGA1150, H410/H510→LGA1200, H610→LGA1700.</span></div>
+      <div><b>AIO → RAM</b><span>Monoblockdagi <code>ram_type</code> (DDR3 / DDR4 / DDR5) faqat shu turdagi xotirani qoldiradi.</span></div>
+      <div><b>AIO → SSD</b><span><code>m2_slots &gt; 0</code> bo'lsa NVMe ham, bo'lmasa faqat SATA SSD tanlanadi.</span></div>
+      <div><b>CPU → MB</b><span>Protsessor soketi plata soketiga teng bo'lishi shart.</span></div>
+      <div><b>MB → RAM</b><span>Plataning <code>ram_type</code> qiymati RAM turiga mos bo'lishi kerak.</span></div>
+      <div><b>MB → SSD</b><span><code>m2_slots = 0</code> bo'lgan platada NVMe drayvi ishlamaydi.</span></div>
+      <div><b>CPU + GPU → PSU</b><span>Quvvat bloki hisoblangan umumiy quvvatdan kuchli bo'lishi kerak.</span></div>
+      <div><b>MB + GPU + COOLER → CASE</b><span>Form-faktor, GPU uzunligi va sovutgich balandligi korpusga mos bo'lishi shart.</span></div>
+      <div><b>MONITOR → GPU</b><span>Monitorlar alohida katalogda; yig'maga qo'shganda GPU chiqishi va o'lchami hisobga olinadi.</span></div>
+      <div><b>PRINTER → savat</b><span>Printer ulanishi (USB / WiFi) va qog'oz o'lchami katalogda ko'rsatiladi; sotuvchi uni klient buyurtmasiga qo'shadi.</span></div>
+    </div>
+  </details>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -181,7 +214,17 @@ td button{padding:3px 8px;font-size:11px}
 const DATA=JSON.parse(document.getElementById('catalog-data').textContent);
 const RATE={{ rate }};
 const MARKUP={{ markup }};
-const ROWS=[
+const MODE='{{ mode }}';
+const AIO_SOCKET={H61:'LGA1155',H81:'LGA1150',H410:'LGA1200',H510:'LGA1200',H610:'LGA1700'};
+const aioRam=a=>a.ram_type||(a.ddr5?'DDR5':'DDR4');
+const aioM2=a=>Number(a.m2_slots||(a.m2_nvme?1:0));
+const ROWS=MODE==='aio'?[
+  {k:'aio',t:'AIO',d:'Monoblock — ekran o‘lchami, chipset va xususiyatlar bo‘yicha tanlang',req:1},
+  {k:'cpu',t:'CPU',d:'Protsessor — monoblock chipsetiga mos soket bo‘yicha tanlanadi',req:1},
+  {k:'ram',t:'RAM',d:'Operativ xotira — monoblock DDR3 / DDR4 / DDR5 turiga qarab',req:1},
+  {k:'ssd',t:'SSD',d:'Tez xotira — M.2 NVMe slot bor-yo‘qligiga qarab',req:1},
+  {k:'kbm',t:'KB&M',d:'Klaviatura + sichqoncha — ulanish va tartib bo‘yicha',req:1},
+]:[
  {k:'cpu',t:'CPU',d:'Protsessor — soket butun yig’mani belgilaydi',req:1},
  {k:'mb',t:'MB',d:'Ona plata — soket va RAM turiga qarab tanlanadi',req:1},
  {k:'ram',t:'RAM',d:'Operativ xotira — plata qo’llaydigan turdagi bo’lishi kerak',req:1},
@@ -205,6 +248,16 @@ function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');cle
 function needWatt(){const c=get('cpu'),g=get('gpu');return(c||g)?Math.round(((c?c.watt:0)+(g?g.watt:0)+75)*1.3/50)*50:0;}
 function allowed(k){
   let l=(DATA[k]||[]).slice();const c=get('cpu'),m=get('mb'),g=get('gpu'),co=get('cool'),cs=get('case');
+  if(MODE==='aio'){
+    const a=get('aio');
+    if(k==='cpu'&&a&&AIO_SOCKET[a.chipset]){
+      const ok=l.filter(x=>x.socket===AIO_SOCKET[a.chipset]);
+      if(ok.length)l=ok;
+    }
+    if(k==='ram'&&a)l=l.filter(x=>x.ram_type===aioRam(a));
+    if(k==='ssd'&&a)l=l.filter(x=>aioM2(a)>0||x.interface!=='NVMe');
+    return l;
+  }
   if(k==='mb'&&c)l=l.filter(x=>x.socket===c.socket);
   if(k==='ram'&&m)l=l.filter(x=>x.ram_type===m.ram_type);
   if(k==='cool'&&c)l=l.filter(x=>arr(x.sockets).includes(c.socket)&&x.cooling_watt>=c.watt);
@@ -220,6 +273,15 @@ function allowed(k){
 }
 function filterNote(k){
   const c=get('cpu'),m=get('mb'),cs=get('case'),n=needWatt();
+  if(MODE==='aio'){
+    const a=get('aio');
+    if(k==='aio')return 'MONOBLOCK — ekran, chipset va xususiyatlar bo‘yicha tanlang.';
+    if(!a)return 'Avval AIO (monoblock) ni tanlang.';
+    if(k==='cpu')return 'Chipset: '+a.chipset+(AIO_SOCKET[a.chipset]?' ('+AIO_SOCKET[a.chipset]+')':'')+'.';
+    if(k==='ram')return 'Faqat '+aioRam(a)+' — monoblock shu turdagi xotira bilan.';
+    if(k==='ssd')return aioM2(a)>0?('Barcha SSD (M.2 NVMe: '+aioM2(a)+' slot).'):'Faqat SATA SSD — M.2 NVMe slot yo‘q.';
+    return 'Barcha mos variantlar ko‘rsatiladi.';
+  }
   if(k==='mb'&&c)return 'Faqat '+c.socket+' soket — boshqa platalar yashirildi.';
   if(k==='ram'&&m)return 'Faqat '+m.ram_type+' — plata boshqa xotirani qabul qilmaydi.';
   if(k==='cool'&&c)return c.socket+' va kamida '+c.watt+' W sovutish talab qilinadi.';
@@ -230,6 +292,7 @@ function filterNote(k){
   return 'Barcha mos variantlar ko‘rsatiladi.';
 }
 function specs(k,x){
+  if(k==='aio')return [x.screen_size,x.panel,x.chipset,aioM2(x)?'M.2 x'+aioM2(x):'M.2 yo‘q',aioRam(x),x.curved?'Curved':'',x.wifi?'WiFi':'',x.webcam?'Webcam':'',x.model_code||''].filter(Boolean).join(' · ');
   const f={cpu:['socket','cores','watt'],mb:['socket','ram_type','form_factor'],ram:['ram_type','capacity_gb','speed_mhz'],
    cool:['cooler_type','cooling_watt','height_mm'],gpu:['chipset','vram_gb','length_mm'],ssd:['interface','capacity_gb'],
    hdd:['form_factor','capacity_gb','rpm'],psu:['watt','efficiency'],case:['case_type','form_factors'],
@@ -238,6 +301,13 @@ function specs(k,x){
 }
 function issues(){
   const c=get('cpu'),m=get('mb'),r=get('ram'),co=get('cool'),g=get('gpu'),s=get('ssd'),p=get('psu'),cs=get('case'),o=[];
+  if(MODE==='aio'){
+    const a=get('aio');
+    if(a&&c&&AIO_SOCKET[a.chipset]&&c.socket!==AIO_SOCKET[a.chipset])o.push(['bad','CPU soketi monoblock chipsetiga mos emas.']);
+    if(a&&r&&r.ram_type!==aioRam(a))o.push(['bad','RAM turi monoblockga mos emas (kerak: '+aioRam(a)+').']);
+    if(a&&s&&aioM2(a)===0&&s.interface==='NVMe')o.push(['bad','Monoblockda M.2 NVMe slot yo‘q.']);
+    return o;
+  }
   if(c&&m&&c.socket!==m.socket)o.push(['bad','CPU va MB soketlari mos emas.']);
   if(m&&r&&m.ram_type!==r.ram_type)o.push(['bad','RAM turi platformaga mos emas.']);
   if(c&&co&&(!arr(co.sockets).includes(c.socket)||co.cooling_watt<c.watt))o.push(['bad','Sovutgich yetarli emas.']);
@@ -262,7 +332,7 @@ function renderCards(){
   $('cards').innerHTML=list.length?list.map(x=>'<div class="card '+(sel[r.k]===x.id?'sel':'')+'" data-id="'+x.id+'">'+
    (sel[r.k]===x.id?'<button class="unsel" data-unsel="1" title="Olib tashlash">×</button>':'')+'<span class="brand">'+(x.brand||'—')+'</span>'+
    '<span class="nm">'+x.name+'</span><span class="sp">'+specs(r.k,x)+'</span>'+
-   '<span class="pr">'+money(x.price)+'</span></div>').join(''):'<p class="hintline">Mos variant topilmadi — qidiruvni yoki oldingi tanlovni o\'zgartiring.</p>';
+   '<span class="pr">'+(r.k==='aio'&&!x.price?'Narx yo‘q':money(x.price))+'</span></div>').join(''):'<p class="hintline">Mos variant topilmadi — qidiruvni yoki oldingi tanlovni o\'zgartiring.</p>';
   $('unselect').hidden=sel[r.k]==null;
   $('prev').disabled=step===0;$('next').textContent=step===ROWS.length-1?'Tugatish':'Keyingi →';
 }
@@ -278,7 +348,7 @@ function update(){
   ROWS.forEach(r=>{const x=get(r.k);if(x)total+=x.price;});
   const mk=MARKUP,sale=mk?Math.round(total*(1+mk/100)/10)*10:total;
   window._sale=sale;$('total').textContent=money(sale);
-  $('power').textContent=needWatt()?'Tavsiya etilgan PSU: ~'+needWatt()+' W':'';
+  $('power').textContent=MODE==='aio'?'':(needWatt()?'Tavsiya etilgan PSU: ~'+needWatt()+' W':'');
   const need=ROWS.filter(r=>r.req),done=need.filter(r=>sel[r.k]!=null).length;
   $('pbarfill').style.width=(100*done/need.length)+'%';
   $('fit').textContent=done+' / '+need.length+' majburiy qism tanlandi';
@@ -296,7 +366,22 @@ function refresh(){
 function choose(id){if(!id)return;const r=ROWS[step],v=+id;if(sel[r.k]===v){sel[r.k]=null;refresh();toast(r.t+' tanlovi olib tashlandi');return;}sel[r.k]=v;toast(r.t+' tanlandi');if(step<ROWS.length-1)step++;refresh();}
 function go(i){step=Math.max(0,Math.min(ROWS.length-1,i));refresh();}
 function cheapest(k,pred){return((DATA[k]||[]).filter(pred||(()=>true)).sort((a,b)=>a.price-b.price)[0])||null;}
+function aioBuild(a,tier){
+  const pick=(arr,i)=>arr[Math.min(i,arr.length-1)]||null;
+  const sock=AIO_SOCKET[a.chipset];
+  let cpus=(DATA.cpu||[]).filter(x=>x.socket===sock).sort((x,y)=>x.price-y.price);
+  if(!cpus.length)cpus=(DATA.cpu||[]).slice().sort((x,y)=>x.price-y.price);
+  const rams=(DATA.ram||[]).filter(x=>x.ram_type===aioRam(a)).sort((x,y)=>x.price-y.price);
+  const ssds=(DATA.ssd||[]).filter(x=>aioM2(a)>0||x.interface!=='NVMe').sort((x,y)=>x.price-y.price);
+  return {aio:a.id,cpu:pick(cpus,tier)?.id||null,ram:pick(rams,tier)?.id||null,
+          ssd:pick(ssds,tier)?.id||null,kbm:pick(DATA.kbm||[],tier)?.id||null};
+}
 function autoBuild(){
+  if(MODE==='aio'){
+    const a=cheapest('aio',x=>x.price>0)||cheapest('aio');if(!a)return;
+    sel=aioBuild(a,0);
+    step=0;refresh();toast('Eng arzon AIO yig‘ma tuzildi');return;
+  }
   sel={};const c=cheapest('cpu');sel.cpu=c.id;
   const m=cheapest('mb',x=>x.socket===c.socket);sel.mb=m.id;
   const r=cheapest('ram',x=>x.ram_type===m.ram_type);sel.ram=r.id;
@@ -308,12 +393,22 @@ function autoBuild(){
   sel.mon=cheapest('mon').id;sel.kbm=cheapest('kbm').id;sel.head=cheapest('head').id;
   step=0;refresh();toast('Eng arzon mos yig‘ma tuzildi');
 }
-const PROF={office:{cpu:0,mb:0,ram:2,cool:1,gpu:1,ssd:1,hdd:null,psu:1,case:1,mon:0,kbm:0,head:null},
+const PROF=MODE==='aio'?{
+ office:{aio:0},
+ gaming:{aio:4},
+ power:{aio:8}
+}:{office:{cpu:0,mb:0,ram:2,cool:1,gpu:1,ssd:1,hdd:null,psu:1,case:1,mon:0,kbm:0,head:null},
  gaming:{cpu:2,mb:3,ram:5,cool:2,gpu:3,ssd:2,hdd:null,psu:3,case:2,mon:0,kbm:0,head:0},
  power:{cpu:5,mb:5,ram:5,cool:3,gpu:5,ssd:3,hdd:null,psu:4,case:3,mon:0,kbm:0,head:1}};
 function profile(name){
   const p=PROF[name];sel={};
-  Object.keys(p).forEach(k=>{const item=(DATA[k]||[])[p[k]];if(item)sel[k]=item.id;});
+  if(MODE==='aio'){
+    const items=DATA.aio||[];
+    const a=items[Math.min(p.aio||0,items.length-1)];
+    if(a)sel=aioBuild(a,{office:0,gaming:1,power:2}[name]);
+  }else{
+    Object.keys(p).forEach(k=>{const item=(DATA[k]||[])[p[k]];if(item)sel[k]=item.id;});
+  }
   document.querySelectorAll('.prof').forEach(b=>b.classList.toggle('on',b.dataset.p===name));
   step=0;refresh();toast(name==='office'?'Ofis yig‘masi':name==='gaming'?'O‘yin yig‘masi':'Kuchli yig‘ma');
 }

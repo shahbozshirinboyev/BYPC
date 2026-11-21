@@ -1,0 +1,96 @@
+{% extends 'builder/_page_base.html' %}
+{% load bypc_tags %}
+{% block title %}{{ order.display_order_number }}{% endblock %}
+{% block style %}
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+@media(max-width:1000px){.grid2{grid-template-columns:1fr}}
+.cardbox h2{font:800 16px "Bricolage Grotesque",sans-serif;margin:0 0 14px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv span:first-child{color:var(--mute)}
+.kv b{font-family:"JetBrains Mono",monospace}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px dashed var(--line)}
+th{font:700 10px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--mute)}
+td.num,th.num{text-align:right}
+.flow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 16px}
+.step{padding:6px 10px;border-radius:8px;background:var(--soft);font:600 11px Onest,sans-serif;color:var(--mute)}
+.step.past{background:var(--ok-bg);color:var(--ok)}
+.step.now{background:var(--ink);color:var(--panel)}
+.err{color:var(--bad);font-size:12px;margin:8px 0}
+{% endblock %}
+{% block content %}
+<div class="pagehead">
+  <div><h1>{{ order.display_order_number }}</h1><p>{{ order.created_at|date:"d.m.Y H:i" }} · {{ order.seller.username }}</p></div>
+  <span class="pill">{{ order.status_display }} / {{ order.get_payment_status_display }}</span>
+</div>
+<p style="margin-top:0"><a href="{% url 'seller' %}" style="color:var(--acc);text-decoration:none">← Savat / Buyurtmalarga qaytish</a></p>
+<div class="grid2">
+  <div style="display:grid;gap:16px">
+    <div class="cardbox">
+      <h2>Qismlar</h2>
+      <table>
+        <thead><tr><th>Guruh</th><th>Nomi</th><th class="num">Soni</th><th class="num">Narxi</th><th class="num">Jami</th></tr></thead>
+        <tbody>
+          {% for line in lines %}<tr><td>{{ line.kind|default:'—' }}</td><td>{{ line.name }}</td><td class="num">{{ line.quantity }}</td><td class="num">${{ line.unit_price_usd|floatformat:0 }}</td><td class="num">${{ line.line_total_usd|floatformat:0 }}</td></tr>{% endfor %}
+        </tbody>
+        <tfoot><tr><td colspan="4" class="num"><b>Jami</b></td><td class="num"><b>${{ order.total|floatformat:0 }}</b></td></tr></tfoot>
+      </table>
+    </div>
+    <div class="cardbox">
+      <h2>Holat oqimi</h2>
+      <div class="flow">
+        {% for s in flow %}
+          <span class="step {% if order.status == s %}now{% elif forloop.counter <= current_index %}past{% endif %}">{{ flow_labels|get_item:s }}</span>
+        {% endfor %}
+      </div>
+      <p style="color:var(--mute);font-size:12px;margin:0">Holat faqat oldinga siljiydi. “Bekor qilindi” istalgan bosqichda qo'yilishi mumkin.</p>
+    </div>
+  </div>
+  <div style="display:grid;gap:16px">
+    <div class="cardbox">
+      <h2>Klient</h2>
+      <div class="kv"><span>Ism</span><span>{{ order.client_name }}</span></div>
+      <div class="kv"><span>Telefon</span><span>{{ order.client_phone|phone_format }}</span></div>
+      <div class="kv"><span>Yetkazish</span><span>{{ order.get_delivery_type_display }}</span></div>
+      <div class="kv"><span>Sana / vaqt</span><span>{{ order.delivery_date|default:'—' }} {{ order.delivery_time }}</span></div>
+      <div class="kv"><span>Manzil</span><span>{{ order.address|default:'—' }}</span></div>
+      <div class="kv"><span>To'lov turi</span><span>{{ payment_type_labels|get_item:order.payment_type }}</span></div>
+      <div class="kv"><span>Jami</span><b>${{ order.total|floatformat:0 }}</b></div>
+      <div class="kv"><span>So'mda</span><b>{{ order.total_uzs|floatformat:0 }}</b></div>
+      <div class="kv"><span>Qoldiq</span><b>${{ order.remaining_amount|floatformat:0 }}</b></div>
+      {% if order.note %}<div style="margin-top:10px;font-size:12px;color:var(--mute)">{{ order.note }}</div>{% endif %}
+    </div>
+    {% if can_manage %}
+    <div class="cardbox">
+      <h2>Holatni o'zgartirish</h2>
+      {% if can_edit %}<p style="margin:0 0 8px;font-size:12px"><a href="{% url 'order_edit' pk=order.pk %}" style="color:var(--acc);text-decoration:none">Ma'lumotlarni tahrirlash →</a></p>{% endif %}
+      <form method="post" action="{% url 'order_status' pk=order.pk %}" id="status-form">{% csrf_token %}
+        <label>Holat</label>
+        <select name="status">
+          {% for value, label in allowed_statuses %}<option value="{{ value }}" {% if value == order.status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <label style="margin-top:10px">To'lov holati</label>
+        <select name="payment_status">
+          {% for value, label in payment_statuses %}<option value="{{ value }}" {% if value == order.payment_status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <div id="status-error" class="err" hidden></div>
+        <button class="btn" style="margin-top:12px" type="submit">Saqlash</button>
+      </form>
+      {% if can_delete %}
+      <form method="post" action="{% url 'order_delete' pk=order.pk %}" style="margin-top:10px" onsubmit="return confirm('Buyurtmani o\'chirishga ishonchingiz komilmi?')">{% csrf_token %}<button class="btn ghost" type="submit">O'chirish</button></form>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+<script>
+const form=document.getElementById('status-form');
+if(form)form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const res=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{'X-Requested-With':'XMLHttpRequest'}});
+  const data=await res.json();
+  if(data.ok)location.reload();
+  else{const box=document.getElementById('status-error');box.textContent=data.error||'Xatolik';box.hidden=false;}
+});
+</script>
+{% endblock %}

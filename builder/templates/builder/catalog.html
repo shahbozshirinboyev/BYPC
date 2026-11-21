@@ -1,0 +1,79 @@
+{% extends 'builder/_page_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block style %}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tools input[type=search]{max-width:360px}
+.tools select{max-width:210px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.item .brand{font:700 10px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--acc)}
+.item .nm{font:600 13px/1.4 Onest,sans-serif;flex:1}
+.item .sp{font:500 10px/1.5 "JetBrains Mono",monospace;color:var(--mute)}
+.item .pr{font:800 18px "Bricolage Grotesque",sans-serif}
+.count{color:var(--mute);font-size:12px;margin-left:auto}
+.item .cartbtn{margin-top:4px}
+{% endblock %}
+{% block content %}
+<div class="pagehead">
+  <div><h1>{{ title }}</h1><p>{{ subtitle }}</p></div>
+  <span class="pill">{{ items|length }} ta qism</span>
+</div>
+<div class="tools">
+  <input id="q" type="search" placeholder="Nomi yoki brendi bo'yicha qidirish..." aria-label="Qidirish">
+  <select id="filter" aria-label="Filtr">
+    <option value="">Barchasi</option>
+    {% if key == 'mon' %}
+      <option value="IPS">IPS</option><option value="VA">VA</option><option value="TN">TN</option><option value="OLED">OLED</option>
+    {% else %}
+      <option value="Laser">Laser</option><option value="Inkjet">Siyohli</option><option value="LED">LED</option>
+      <option value="Wired">Simli</option><option value="Wireless">Simsiz</option>
+    {% endif %}
+  </select>
+  <select id="sort" aria-label="Saralash">
+    <option value="name">Nom bo'yicha</option>
+    <option value="asc">Narx: past → yuqori</option>
+    <option value="desc">Narx: yuqori → past</option>
+  </select>
+  <span class="count" id="count"></span>
+</div>
+<div class="grid" id="grid"></div>
+{{ items|json_script:"items-data" }}
+{% if role == 'seller' or role == 'admin' %}
+<form id="cart-add-form" method="post" action="{% url 'seller' %}">{% csrf_token %}
+  <input type="hidden" name="action" value="add">
+  <input type="hidden" name="kind" id="cart-kind" value="{{ key }}">
+  <input type="hidden" name="id" id="cart-id" value="">
+  <input type="hidden" name="qty" value="1">
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+</form>
+{% endif %}
+{% endblock %}
+{% block script %}
+<script>
+const ITEMS=JSON.parse(document.getElementById('items-data').textContent);
+const MODE='{{ key }}';
+const $=id=>document.getElementById(id);
+function specs(x){
+  if(MODE==='mon')return [x.size_inch?x.size_inch+'"':'',x.panel||'',x.refresh_hz?x.refresh_hz+' Hz':'',x.brand||''].filter(Boolean).join(' · ');
+  return [x.printer_type||'',x.connection==='Wireless'?'WiFi':'USB',x.paper_size||'',x.color_print?'Rangli':'Mono',x.duplex?'Duplex':'',x.speed_ppm?x.speed_ppm+' ppm':''].filter(Boolean).join(' · ');
+}
+function render(){
+  const q=$('q').value.toLowerCase().trim(), f=$('filter').value, s=$('sort').value;
+  let l=ITEMS.filter(x=>(!q||(x.name+' '+(x.brand||'')).toLowerCase().includes(q))&&
+    (!f||JSON.stringify(x).toLowerCase().includes(f.toLowerCase())));
+  if(s==='asc')l.sort((a,b)=>a.price-b.price);
+  else if(s==='desc')l.sort((a,b)=>b.price-a.price);
+  else l.sort((a,b)=>a.name.localeCompare(b.name));
+  $('count').textContent=l.length+" ta ko'rsatilmoqda";
+  const canCart=!!$('cart-add-form');
+  $('grid').innerHTML=l.length?l.map(x=>`<div class="item"><span class="brand">${x.brand||'—'}</span><span class="nm">${x.name}</span><span class="sp">${specs(x)}</span><span class="pr">${x.price?'$'+Math.round(x.price):'Narx yo‘q'}</span>${canCart?`<button class="btn small cartbtn" type="button" onclick="sendToCart(${x.id})">Savatga qo'shish</button>`:''}</div>`).join(''):'<p class="count">Hech narsa topilmadi.</p>';
+}
+function sendToCart(id){
+  if(!$('cart-add-form'))return;
+  $('cart-id').value=id;
+  $('cart-add-form').submit();
+}
+['q','filter','sort'].forEach(id=>$(id).addEventListener('input',render));
+render();
+</script>
+{% endblock %}

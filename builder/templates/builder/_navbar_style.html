@@ -1,0 +1,31 @@
+.navbar{position:fixed;left:0;right:0;top:0;z-index:50;background:var(--nav-bg);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--nav-border);transition:box-shadow .2s}
+.navbar.scrolled{box-shadow:0 8px 26px var(--shadow)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.nav-name{font:800 20px "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;line-height:1.05}
+.nav-name b{color:var(--acc)}
+.nav-name small{display:block;font:500 9px "JetBrains Mono",monospace;letter-spacing:.2em;color:var(--mute)}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font:600 13px Onest,sans-serif;transition:.15s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.on{background:var(--soft);color:var(--acc)}
+.nav-actions{display:flex;align-items:center;gap:7px}
+.nav-auth{display:flex;align-items:center;gap:7px}
+.nav-auth a{text-decoration:none;font:600 13px Onest,sans-serif;color:var(--ink);padding:8px 10px;border-radius:8px}
+.nav-auth a:hover{background:var(--soft);color:var(--acc)}
+.nav-auth .login-link{color:var(--acc)}
+.nav-auth form,.nav-mobile form{margin:0}
+.logout-btn{display:block;width:100%;text-align:left;border:0;background:transparent;padding:11px 12px;border-radius:8px;color:var(--ink);font:600 13px Onest,sans-serif;cursor:pointer}
+.logout-btn:hover{background:var(--soft);color:var(--acc)}
+.theme-toggle{width:38px;height:38px;padding:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink);flex:none}
+.theme-toggle svg{width:18px;height:18px}
+[data-theme="light"] .i-sun,[data-theme="dark"] .i-moon{display:none}
+.btn-admin{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 18px;border-radius:8px;background:var(--ink);color:var(--panel);text-decoration:none;font:600 13px Onest,sans-serif;transition:.15s}
+.btn-admin:hover{background:var(--btn-hover);color:#fff}
+.nav-toggle{width:38px;height:38px;padding:0;display:none;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.nav-toggle svg{width:21px;height:21px}
+.nav-mobile{display:none;padding:6px 20px 14px;border-top:1px solid var(--line);background:var(--nav-mobile-bg)}
+.nav-mobile a{display:block;padding:11px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font:600 14px Onest,sans-serif}
+.nav-mobile a:hover,.nav-mobile a.on{background:var(--soft);color:var(--acc)}
+.nav-mobile .msep{border-top:1px solid var(--line);margin:6px 4px}
+@media(max-width:1180px){.nav-links a{padding:8px 9px;font-size:12px}.nav-auth a{padding:7px 8px;font-size:12px}.btn-admin{padding:0 12px}}
+@media(max-width:900px){.nav-links,.btn-admin,.nav-auth{display:none}.nav-toggle{display:grid}.nav-mobile.open{display:block}}

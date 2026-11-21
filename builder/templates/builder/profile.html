@@ -1,0 +1,62 @@
+{% extends 'builder/_page_base.html' %}
+{% block title %}Profil{% endblock %}
+{% block style %}
+.grid2{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.cardbox h2{font:800 16px "Bricolage Grotesque",sans-serif;margin:0 0 14px}
+.kv2{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.kv2 span:first-child{color:var(--mute)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.row b{font-family:"JetBrains Mono",monospace;color:var(--acc)}
+.roles{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.role-chip{padding:6px 10px;border-radius:8px;background:var(--soft);font:600 12px Onest,sans-serif}
+.role-chip.on{background:var(--ink);color:var(--panel)}
+{% endblock %}
+{% block content %}
+<div class="pagehead"><div><h1>Profil</h1><p>Shaxsiy ma'lumotlar, huquqlar va saqlangan yig'malar</p></div><span class="pill">{{ role_label }}</span></div>
+<div class="grid2">
+  <div class="cardbox">
+    <h2>Foydalanuvchi</h2>
+    <div class="kv2"><span>Login</span><span>{{ request.user.username }}</span></div>
+    <div class="kv2"><span>Email</span><span>{{ request.user.email|default:"—" }}</span></div>
+    <div class="kv2"><span>Rol</span><span>{{ role_label }}</span></div>
+    <div class="kv2"><span>Huquq darajasi</span><span>{% if role == 'admin' %}Admin{% elif role == 'seller' %}Sotuvchi{% else %}Mehmon{% endif %}</span></div>
+    <div class="roles">
+      <span class="role-chip {% if role == 'guest' %}on{% endif %}">Mehmon</span>
+      <span class="role-chip {% if role == 'seller' %}on{% endif %}">Sotuvchi</span>
+      <span class="role-chip {% if role == 'admin' %}on{% endif %}">Admin</span>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+      {% if role == 'seller' or role == 'admin' %}<a class="btn" href="{% url 'seller' %}">Savat / Buyurtmalar</a>{% endif %}
+      {% if role == 'admin' %}<a class="btn ghost" href="/admin/">Admin panel</a>{% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn ghost" type="submit">Chiqish</button></form>
+    </div>
+  </div>
+  <div style="display:grid;gap:16px">
+    <div class="cardbox">
+      <h2>Imkoniyatlar</h2>
+      {% if role == 'admin' %}
+        <p style="margin:0;color:var(--mute)">Katalog va narxlarni tahrirlash, foydalanuvchi rollarini belgilash, sozlamalar, barcha buyurtmalar va yig'malar.</p>
+      {% elif role == 'seller' %}
+        <p style="margin:0;color:var(--mute)">PC / AIO / monitor / printerlardan savat tuzib, klient uchun buyurtma yaratish. Admin paneliga kirish yo'q.</p>
+      {% else %}
+        <p style="margin:0;color:var(--mute)">Yig'malarni hisoblash, saqlash va ulashish. Buyurtma yaratish va admin paneli faqat sotuvchi/admin uchun.</p>
+      {% endif %}
+    </div>
+    <div class="cardbox">
+      <h2>Saqlangan yig'malar ({{ builds|length }})</h2>
+      {% if builds %}
+        {% for b in builds %}<div class="row"><span>{{ b.name }} <small style="color:var(--mute)">{{ b.created_at|date:"d.m H:i" }}</small></span><b>${{ b.total|floatformat:0 }}</b></div>{% endfor %}
+      {% else %}<p style="color:var(--mute);margin:0">Hali saqlangan yig'ma yo'q. Kalkulyatorda “Saqlash” tugmasini bosing.</p>{% endif %}
+    </div>
+    {% if role == 'seller' or role == 'admin' %}
+    <div class="cardbox">
+      <h2>Buyurtmalar ({{ orders|length }})</h2>
+      {% if orders %}
+        {% for o in orders %}<div class="row"><span><a href="{% url 'order_detail' pk=o.id %}" style="color:var(--acc);text-decoration:none">{{ o.order_number|default:'ORDER#'|add:o.id }}</a> · {{ o.client_name }} <small style="color:var(--mute)">{{ o.created_at|date:"d.m H:i" }}</small></span><b>${{ o.total|floatformat:0 }} · {{ o.get_status_display }}</b></div>{% endfor %}
+      {% else %}<p style="color:var(--mute);margin:0">Hali buyurtma yo'q.</p>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

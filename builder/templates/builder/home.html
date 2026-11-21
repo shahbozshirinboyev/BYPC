@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BYPC — Build Your PC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+{% include 'builder/_theme_init.html' %}
+<style>
+{% include 'builder/_theme_style.html' %}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;padding-top:72px;background:var(--bg);color:var(--ink);font:400 14px/1.5 Onest,system-ui,sans-serif;background-image:radial-gradient(circle at 90% 0,rgba(43,76,255,.07),transparent 40%)}
+{% include 'builder/_navbar_style.html' %}
+
+.wrap{max-width:1280px;margin:0 auto;padding:22px 20px 70px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#14243a,#223f6b);border-radius:22px;padding:64px 56px;color:#fff}
+.hero:before{content:"";position:absolute;right:-90px;top:-90px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(43,76,255,.65),transparent 65%)}
+.hero:after{content:"";position:absolute;right:110px;bottom:-140px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(123,63,242,.45),transparent 65%)}
+.hero>*{position:relative;z-index:1}
+.hero .eyebrow{display:inline-block;font:700 10px "JetBrains Mono",monospace;letter-spacing:.16em;color:#8fb0ff;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:99px;padding:7px 13px;margin-bottom:18px}
+.hero h1{font:800 clamp(32px,5vw,52px)/1.08 "Bricolage Grotesque",sans-serif;letter-spacing:-.035em;margin:0 0 14px;max-width:720px}
+.hero h1 em{font-style:normal;color:#8fb0ff}
+.hero p{margin:0 0 28px;max-width:560px;font-size:16px;color:#c5d5e8}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.cta a{display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 24px;border-radius:10px;text-decoration:none;font:700 14px Onest,sans-serif;transition:.16s}
+.cta .primary{background:#fff;color:#14243a}
+.cta .primary:hover{background:#e9efff;transform:translateY(-2px)}
+.cta .ghost{border:1px solid rgba(255,255,255,.3);color:#fff}
+.cta .ghost:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+
+.heading{margin:38px 0 14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.heading h2{font:800 24px "Bricolage Grotesque",sans-serif;margin:0;letter-spacing:-.02em}
+.heading span{font-size:13px;color:var(--mute)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{position:relative;display:block;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;transition:.18s;overflow:hidden}
+.card:hover{border-color:var(--acc);transform:translateY(-3px);box-shadow:0 14px 34px rgba(43,76,255,.1)}
+.card .num{font:700 10px "JetBrains Mono",monospace;letter-spacing:.12em;color:var(--acc)}
+.card h3{font:800 22px "Bricolage Grotesque",sans-serif;margin:10px 0 8px;letter-spacing:-.02em}
+.card p{margin:0;color:var(--mute);font-size:13px;line-height:1.6}
+.card .go{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font:700 13px Onest,sans-serif;color:var(--acc)}
+.card .badge{position:absolute;top:20px;right:20px;font:700 10px "JetBrains Mono",monospace;color:var(--acc2);background:rgba(123,63,242,.09);border-radius:99px;padding:5px 10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
+.chips span{font:600 11px "JetBrains Mono",monospace;color:var(--mute);background:var(--soft);border-radius:7px;padding:5px 9px}
+.stats{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.stat b{display:block;font:800 26px "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;color:var(--acc)}
+.stat span{font-size:12px;color:var(--mute)}
+.foot{margin-top:34px;padding-top:18px;border-top:1px dashed var(--line);color:var(--mute);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.foot a{color:var(--acc);text-decoration:none}
+</style>
+</head>
+<body>
+{% include 'builder/_navbar.html' %}
+
+<div class="wrap">
+  <section class="hero">
+    <span class="eyebrow">BUILD YOUR PC · KALKULYATOR</span>
+    <h1>Kompyuteringizni <em>o'zingiz</em> yig'ing</h1>
+    <p>Mos qismlarni tanlang, narxni ko'ring va xatoliklardan saqlaning. PC yig'masi, AIO monoblock, monitor va printerlar — hammasi bir joyda.</p>
+    <div class="cta">
+      <a class="primary" href="{% url 'pc_assembly' %}">PC assembly ga o'tish →</a>
+      <a class="ghost" href="{% url 'aio_assembly' %}">AIO assembly ni sinash</a>
+    </div>
+  </section>
+
+  <div class="heading"><h2>Bo'limni tanlang</h2><span>Ikki hisob rejimi · ikki katalog</span></div>
+  <div class="cards">
+    <a class="card" href="{% url 'pc_assembly' %}">
+      <span class="badge">TO'LIQ</span>
+      <span class="num">01 / PC ASSEMBLY</span>
+      <h3>Klassik PC yig'masi</h3>
+      <p>Barcha 12 bosqich: CPU, plata, RAM, sovutgich, videokarta, xotira, quvvat bloki, korpus va boshqalar. Har bir qadamda moslik avtomatik tekshiriladi.</p>
+      <div class="chips"><span>12 bosqich</span><span>1000+ qism</span><span>moslik tekshiruvi</span></div>
+      <span class="go">Kalkulyatorni ochish →</span>
+    </a>
+    <a class="card" href="{% url 'aio_assembly' %}">
+      <span class="badge">TEZ</span>
+      <span class="num">02 / AIO ASSEMBLY</span>
+      <h3>AIO monoblock asosida yig'ma</h3>
+      <p>Faqat 5 bosqich: AIO monoblock, CPU, RAM, SSD va KB&amp;M. Chipset, DDR4/DDR5 va M.2 NVMe xususiyatlari hisobga olinadi.</p>
+      <div class="chips"><span>5 bosqich</span><span>monoblock</span><span>oddiy hisob</span></div>
+      <span class="go">AIO hisobini ochish →</span>
+    </a>
+    <a class="card" href="{% url 'monitors' %}">
+      <span class="badge">KATALOG</span>
+      <span class="num">03 / MONITORS</span>
+      <h3>Monitorlar</h3>
+      <p>Panel turi, diagonal va yangilanish tezligi bo'yicha qidirish va saralash. Narxlar admin panelidan boshqariladi.</p>
+      <div class="chips"><span>katalog</span><span>filtr</span><span>narx</span></div>
+      <span class="go">Monitorlarni ko'rish →</span>
+    </a>
+    <a class="card" href="{% url 'printers' %}">
+      <span class="badge">KATALOG</span>
+      <span class="num">04 / PRINTERS</span>
+      <h3>Printerlar</h3>
+      <p>Laser, siyohli va LED printerlar: ulanish turi, qog'oz o'lchami va rangli chop etish bo'yicha tanlang.</p>
+      <div class="chips"><span>katalog</span><span>filtr</span><span>savat</span></div>
+      <span class="go">Printerlarni ko'rish →</span>
+    </a>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>12</b><span>PC assembly bosqichi</span></div>
+    <div class="stat"><b>5</b><span>AIO assembly bosqichi</span></div>
+    <div class="stat"><b>{{ aio_count }}</b><span>AIO monoblock</span></div>
+    <div class="stat"><b>{{ total_parts }}</b><span>Jami katalog qismi</span></div>
+  </div>
+
+  <div class="foot"><span>© BYPC — Build Your PC</span><span>{% if role == 'admin' %}Narxlar va sozlamalar: <a href="/admin/">admin paneli</a>{% else %}<a href="{% url 'login' %}">Kirish</a> · <a href="{% url 'register' %}">Ro'yxatdan o'tish</a>{% endif %}</span></div>
+</div>
+
+</body>
+</html>

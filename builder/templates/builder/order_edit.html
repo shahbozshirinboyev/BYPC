@@ -1,0 +1,56 @@
+{% extends 'builder/_page_base.html' %}
+{% block title %}{{ order.display_order_number }} — tahrirlash{% endblock %}
+{% block style %}
+.form{max-width:720px}
+.form label{margin-top:10px}
+.form textarea{min-height:70px;resize:vertical}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:flex;gap:8px;margin-top:16px}
+{% endblock %}
+{% block content %}
+<div class="pagehead">
+  <div><h1>{{ order.display_order_number }} — tahrirlash</h1><p>Qismlar o'zgarmaydi; jami bazadagi narxlar bo'yicha qayta hisoblanadi</p></div>
+  <span class="pill">{{ order.status_display }}</span>
+</div>
+<p style="margin-top:0"><a href="{% url 'order_detail' pk=order.pk %}" style="color:var(--acc);text-decoration:none">← Buyurtmaga qaytish</a></p>
+<div class="cardbox form">
+  <form method="post">{% csrf_token %}
+    <label>Klient ismi *</label><input type="text" name="client" value="{{ order.client_name }}" required>
+    <label>Telefon</label><input type="text" name="phone" value="{{ order.client_phone }}" placeholder="+998 ...">
+    <div class="two">
+      <div><label>Yetkazish</label><select name="delivery_type">{% for value, label in delivery_choices %}<option value="{{ value }}" {% if value == order.delivery_type %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+      <div><label>To'lov holati</label><select name="payment_status">{% for value, label in payment_choices %}<option value="{{ value }}" {% if value == order.payment_status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="two">
+      <div><label>To'lov turi</label><select name="payment_type">{% for value, label in payment_type_choices %}<option value="{{ value }}" {% if value == order.payment_type %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+      <div><label>Qisman to'lov ($)</label><input type="number" step="0.01" min="0" name="partial_amount" value="{{ order.partial_amount }}"></div>
+    </div>
+    <div id="mixed-block" {% if order.payment_type != 'CASH_CARD' %}hidden{% endif %}>
+      <div class="two">
+        <div><label>Naqd ($)</label><input type="number" step="0.01" min="0" name="cash_amount" value="{{ order.cash_amount }}"></div>
+        <div><label>Karta ($)</label><input type="number" step="0.01" min="0" name="card_amount" value="{{ order.card_amount }}"></div>
+      </div>
+      <label>Bank ($)</label><input type="number" step="0.01" min="0" name="transfer_amount" value="{{ order.transfer_amount }}">
+    </div>
+    <div class="two">
+      <div><label>Sana</label><input type="date" name="delivery_date" value="{{ order.delivery_date|date:'Y-m-d' }}"></div>
+      <div><label>Vaqt</label><input type="time" name="time" value="{{ order.delivery_time }}"></div>
+    </div>
+    <div class="two">
+      <div><label>Viloyat</label><input type="text" name="region" value="{{ order.region }}"></div>
+      <div><label>Tuman</label><input type="text" name="district" value="{{ order.district }}"></div>
+    </div>
+    <div class="two">
+      <div><label>Shahar</label><input type="text" name="city" value="{{ order.city }}"></div>
+      <div><label>Mo'ljal</label><input type="text" name="landmark" value="{{ order.landmark }}"></div>
+    </div>
+    <label>Izoh</label><textarea name="note">{{ order.note }}</textarea>
+    <div class="actions"><button class="btn" type="submit">Saqlash</button><a class="btn ghost" href="{% url 'order_detail' pk=order.pk %}">Bekor qilish</a></div>
+  </form>
+</div>
+<script>
+const payType=document.querySelector('select[name=payment_type]');
+const mixedBlock=document.getElementById('mixed-block');
+if(payType&&mixedBlock)payType.addEventListener('change',()=>mixedBlock.hidden=payType.value!=='CASH_CARD');
+</script>
+{% endblock %}

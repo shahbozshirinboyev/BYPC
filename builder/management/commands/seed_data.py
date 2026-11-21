@@ -5,8 +5,8 @@ Idempotent: qayta ishga tushirilsa takroriy yozmaydi, balki yangilaydi.
 from django.core.management.base import BaseCommand
 
 from builder.models import (
-    CPU, Motherboard, RAM, Cooler, GPU, SSD, HDD, PSU, Case,
-    Monitor, KeyboardMouse, Headset,
+    CPU, Motherboard, RAM, Cooler, AIO, GPU, SSD, HDD, PSU, Case,
+    Monitor, Printer, KeyboardMouse, Headset,
 )
 
 ALL_SOCKETS = "LGA1700,AM4,AM5"
@@ -41,6 +41,34 @@ DATA = {
         ("Komplektdagi", 0, {"brand": "Stock", "cooler_type": "Air", "sockets": ALL_SOCKETS, "cooling_watt": 65, "height_mm": 50}),
         ("Minorali kuler", 35, {"brand": "Deepcool", "cooler_type": "Air", "sockets": ALL_SOCKETS, "cooling_watt": 120, "height_mm": 150}),
         ("240 mm suvli", 90, {"brand": "Corsair", "cooler_type": "Liquid", "sockets": ALL_SOCKETS, "cooling_watt": 250, "height_mm": 0}),
+    ],
+    AIO: [
+        ('Xtech 24" IPS H61 Flat (Вебкамера WiFi) white', 125,
+         {"brand": "Xtech", "screen_size": '24"', "panel": "IPS", "chipset": "H61"}),
+        ('Xtech 24" IPS H81 Flat (Вебкамера WiFi) white', 129,
+         {"brand": "Xtech", "screen_size": '24"', "panel": "IPS", "chipset": "H81"}),
+        ('Xtech 24" IPS H410 Flat (Вебкамера WiFi) white', 139,
+         {"brand": "Xtech", "screen_size": '24"', "panel": "IPS", "chipset": "H410"}),
+        ('Xtech 24" IPS H510 Flat (Вебкамера WiFi M.2 nvme) white', 0,
+         {"brand": "Xtech", "screen_size": '24"', "panel": "IPS", "chipset": "H510", "m2_nvme": True, "note": "Narx jadvalda ko‘rsatilmagan"}),
+        ('Xtech 24" IPS H610 Flat (Вебкамера WiFi M.2 nvme) white', 136,
+         {"brand": "Xtech", "screen_size": '24"', "panel": "IPS", "chipset": "H610", "m2_nvme": True}),
+        ('Xtech 24" IPS H610 Model: S238 (Вебкамера WiFi M.2 nvme) white', 140,
+         {"brand": "Xtech", "screen_size": '24"', "panel": "IPS", "chipset": "H610", "m2_nvme": True, "model_code": "S238"}),
+        ('Xtech 27" IPS H61 Flat (Вебкамера WiFi) white', 150,
+         {"brand": "Xtech", "screen_size": '27"', "panel": "IPS", "chipset": "H61"}),
+        ('Xtech 27" IPS H510 Flat (Вебкамера WiFi M.2.nvme) white', 175,
+         {"brand": "Xtech", "screen_size": '27"', "panel": "IPS", "chipset": "H510", "m2_nvme": True}),
+        ('Xtech 27" IPS H610 Flat (Вебкамера WiFi M.2.nvme) white', 169,
+         {"brand": "Xtech", "screen_size": '27"', "panel": "IPS", "chipset": "H610", "m2_nvme": True}),
+        ('Xtech 27" IPS H610 DDR5 Flat (Вебкамера WiFi M.2.nvme) white', 0,
+         {"brand": "Xtech", "screen_size": '27"', "panel": "IPS", "chipset": "H610", "m2_nvme": True, "ddr5": True, "note": "Narx jadvalda ko‘rsatilmagan"}),
+        ('Xtech 32" IPS H61 Curved (WiFi M.2.nvme) white', 269,
+         {"brand": "Xtech", "screen_size": '32"', "panel": "IPS", "chipset": "H61", "curved": True, "webcam": False, "m2_nvme": True}),
+        ('Xtech 32" IPS H610 Curved (WiFi M.2.nvme) white', 275,
+         {"brand": "Xtech", "screen_size": '32"', "panel": "IPS", "chipset": "H610", "curved": True, "webcam": False, "m2_nvme": True}),
+        ('No Name 24" H610 New model', 136,
+         {"brand": "No Name", "screen_size": '24"', "panel": "—", "chipset": "H610", "note": "New model"}),
     ],
     GPU: [
         ("Axle GeForce RTX 3060 12GB", 300, {"brand": "Axle", "chipset": "NVIDIA", "vram_gb": 12, "watt": 170, "length_mm": 240}),
@@ -77,6 +105,14 @@ DATA = {
     Monitor: [
         ("Xtech 27 inch IPS 165 Hz egri (SG-GM270HL)", 105, {"brand": "Xtech", "panel": "IPS", "size_inch": 27, "refresh_hz": 165}),
     ],
+    Printer: [
+        ("HP LaserJet Pro M404dn", 220, {"brand": "HP", "printer_type": "Laser", "connection": "Wired", "paper_size": "A4", "color_print": False, "duplex": True, "speed_ppm": 38}),
+        ("HP Color LaserJet Pro MFP M479fdw", 480, {"brand": "HP", "printer_type": "Laser", "connection": "Wireless", "paper_size": "A4", "color_print": True, "duplex": True, "speed_ppm": 28}),
+        ("Canon PIXMA G3411", 210, {"brand": "Canon", "printer_type": "Inkjet", "connection": "Wired", "paper_size": "A4", "color_print": True, "duplex": False, "speed_ppm": 11}),
+        ("Epson EcoTank L3250", 195, {"brand": "Epson", "printer_type": "Inkjet", "connection": "Wireless", "paper_size": "A4", "color_print": True, "duplex": False, "speed_ppm": 10}),
+        ("Xerox B1025", 640, {"brand": "Xerox", "printer_type": "Laser", "connection": "Wired", "paper_size": "A4+A3", "color_print": False, "duplex": True, "speed_ppm": 45}),
+        ("Brother DCP-L2540DW", 260, {"brand": "Brother", "printer_type": "LED", "connection": "Wireless", "paper_size": "A4", "color_print": False, "duplex": True, "speed_ppm": 30}),
+    ],
     KeyboardMouse: [
         ("Metoo C20 simsiz komplekt, oq", 8, {"brand": "Metoo", "connection": "Wireless", "layout": "UZ/RU/EN"}),
     ],
@@ -101,7 +137,11 @@ class Command(BaseCommand):
             if options["clear"]:
                 model.objects.all().delete()
             for name, price, extra in rows:
-                model.objects.update_or_create(name=name, defaults={"price": price, **extra})
+                defaults = {"price": price, **extra}
+                if model is AIO:
+                    defaults["m2_slots"] = 1 if defaults.get("m2_nvme") else 0
+                    defaults["ram_type"] = "DDR5" if defaults.get("ddr5") else "DDR4"
+                model.objects.update_or_create(name=name, defaults=defaults)
                 total += 1
             self.stdout.write(self.style.SUCCESS(
                 f"  {model._meta.verbose_name_plural}: {len(rows)} ta"))

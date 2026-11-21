@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}BYPC{% endblock %} — BYPC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+{% include 'builder/_theme_init.html' %}
+<style>
+{% include 'builder/_theme_style.html' %}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;padding-top:72px;background:var(--bg);color:var(--ink);font:400 14px/1.5 Onest,system-ui,sans-serif;background-image:radial-gradient(circle at 90% 0,rgba(43,76,255,.07),transparent 40%)}
+{% include 'builder/_navbar_style.html' %}
+.wrap{max-width:1280px;margin:0 auto;padding:26px 20px 70px}
+.pagehead{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.pagehead h1{font:800 30px "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:0}
+.pagehead p{margin:6px 0 0;color:var(--mute);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--soft);color:var(--acc);border-radius:99px;padding:6px 12px;font:700 11px "JetBrains Mono",monospace}
+.cardbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.msg{padding:9px 12px;border-radius:9px;font-size:13px;margin-bottom:12px;background:var(--ok-bg);color:var(--ok)}
+.msg.error{background:var(--bad-bg);color:var(--bad)}
+label{display:block;font:600 12px Onest,sans-serif;margin-bottom:5px;color:var(--mute)}
+input[type=text],input[type=password],input[type=search],input[type=number],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink);font:400 13px Onest,sans-serif;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border:0;border-radius:9px;background:var(--acc);color:var(--acc-ink);text-decoration:none;font:600 13px Onest,sans-serif;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.btn.small{padding:6px 10px;font-size:12px}
+.foot{margin-top:26px;color:var(--mute);font-size:12px;text-align:center}
+.foot a{color:var(--acc);text-decoration:none}
+{% block style %}{% endblock %}
+</style>
+</head>
+<body>
+{% include 'builder/_navbar.html' %}
+<div class="wrap">
+  {% if messages %}{% for m in messages %}<div class="msg{% if 'error' in m.tags %} error{% endif %}">{{ m }}</div>{% endfor %}{% endif %}
+  {% block content %}{% endblock %}
+  <div class="foot">© BYPC — Build Your PC</div>
+</div>
+{% block script %}{% endblock %}
+</body>
+</html>

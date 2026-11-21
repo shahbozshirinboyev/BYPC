@@ -4,18 +4,29 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 
 from .models import (
-    CPU, Motherboard, RAM, Cooler, GPU, SSD, HDD, PSU, Case,
-    Monitor, KeyboardMouse, Headset, SavedBuild, Settings,
+    CPU, Motherboard, RAM, Cooler, AIO, GPU, SSD, HDD, PSU, Case,
+    Monitor, Printer, KeyboardMouse, Headset, SavedBuild, Settings,
+    Profile, Order, OrderItem,
 )
 
-ORDER = ["CPU", "MB", "RAM", "COOLER", "GPU", "SSD", "HDD", "PSU",
-         "CASE", "MONITOR", "KB&M", "HEADSET", "SETTINGS"]
+ORDER = ["CPU", "AIO (Моноблоки)", "MB", "RAM", "COOLER", "GPU", "SSD", "HDD", "PSU",
+         "CASE", "MONITOR", "PRINTER", "KB&M", "HEADSET", "BUYURTMALAR",
+         "PROFIL", "SAVED BUILDS", "SETTINGS"]
 
 
 class BYPCAdminSite(AdminSite):
     site_header = "BYPC — boshqaruv paneli"
     site_title = "BYPC Admin"
     index_title = "Qismlar katalogi"
+
+    def has_permission(self, request):
+        """Faqat Admin roli admin paneliga kira oladi."""
+        if not request.user.is_active:
+            return False
+        if request.user.is_superuser:
+            return True
+        profile = getattr(request.user, "profile", None)
+        return bool(profile and profile.role == "admin")
 
     def get_app_list(self, request, app_label=None):
         app_list = super().get_app_list(request, app_label)
@@ -60,6 +71,12 @@ class RAMAdmin(BaseAdmin):
 class CoolerAdmin(BaseAdmin):
     list_display = ("name", "brand", "cooler_type", "cooling_watt", "height_mm", "price")
     list_filter = ("brand", "cooler_type", "cooling_watt", "sockets")
+
+
+@admin.register(AIO, site=admin_site)
+class AIOAdmin(BaseAdmin):
+    list_display = ("name", "brand", "screen_size", "chipset", "panel", "ram_type", "m2_slots", "price")
+    list_filter = ("brand", "screen_size", "chipset", "panel", "ram_type", "m2_slots", "curved")
 
 
 @admin.register(GPU, site=admin_site)
@@ -108,6 +125,42 @@ class KeyboardMouseAdmin(BaseAdmin):
 class HeadsetAdmin(BaseAdmin):
     list_display = ("name", "brand", "connection", "surround", "price")
     list_filter = ("brand", "connection", "surround")
+
+
+@admin.register(Printer, site=admin_site)
+class PrinterAdmin(BaseAdmin):
+    list_display = ("name", "brand", "printer_type", "connection", "paper_size", "color_print", "price")
+    list_filter = ("brand", "printer_type", "connection", "paper_size", "color_print", "duplex")
+
+
+@admin.register(Profile, site=admin_site)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "role", "phone")
+    list_filter = ("role",)
+    search_fields = ("user__username", "user__email", "phone")
+
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    fields = ("kind", "name", "quantity", "unit_price_usd", "line_total_display")
+    readonly_fields = ("line_total_display",)
+
+    @admin.display(description="Qator jami (USD)")
+    def line_total_display(self, obj):
+        return f"${obj.line_total_usd:.2f}"
+
+
+@admin.register(Order, site=admin_site)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ("display_order_number", "client_name", "client_phone", "seller",
+                    "total", "status", "payment_status", "payment_type", "created_at")
+    list_filter = ("status", "payment_status", "payment_type", "delivery_type",
+                   "created_at", "seller")
+    search_fields = ("order_number", "client_name", "client_phone", "note")
+    readonly_fields = ("order_number", "created_at", "updated_at", "delivered_at")
+    inlines = [OrderItemInline]
+    ordering = ("-created_at",)
 
 
 admin_site.register(User, UserAdmin)

@@ -1,0 +1,29 @@
+{% extends 'builder/_page_base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block style %}
+.authbox{max-width:430px;margin:30px auto}
+.authbox h1{font:800 26px "Bricolage Grotesque",sans-serif;margin:0 0 6px}
+.authbox .sub{color:var(--mute);font-size:13px;margin-bottom:20px}
+.authbox form p{margin:0 0 14px}
+.authbox .err{color:var(--bad);font-size:12px;margin-top:4px}
+.authbox .switch{margin-top:18px;font-size:13px;color:var(--mute)}
+.authbox .switch a{color:var(--acc);text-decoration:none;font-weight:600}
+{% endblock %}
+{% block content %}
+<div class="authbox cardbox">
+  <h1>{{ title }}</h1>
+  <div class="sub">{% if kind == 'login' %}Hisobingizga kiring va yig'malaringizni ko'ring.{% else %}Yangi hisob yarating — yig'malaringiz profilga saqlanadi.{% endif %}</div>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      <p><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+      {% if field.errors %}<span class="err">{{ field.errors.0 }}</span>{% endif %}</p>
+    {% endfor %}
+    <button class="btn" type="submit">{% if kind == 'login' %}Kirish{% else %}Ro'yxatdan o'tish{% endif %}</button>
+  </form>
+  <div class="switch">
+    {% if kind == 'login' %}Hisobingiz yo'qmi? <a href="{% url 'register' %}">Ro'yxatdan o'ting</a>
+    {% else %}Allaqachon hisob bor? <a href="{% url 'login' %}">Kiring</a>{% endif %}
+  </div>
+</div>
+{% endblock %}

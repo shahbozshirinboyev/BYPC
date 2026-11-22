@@ -214,6 +214,7 @@ td button{padding:3px 8px;font-size:11px}
 const DATA=JSON.parse(document.getElementById('catalog-data').textContent);
 const RATE={{ rate }};
 const MARKUP={{ markup }};
+const LABOR={{ labor }};
 const MODE='{{ mode }}';
 const AIO_SOCKET={H61:'LGA1155',H81:'LGA1150',H410:'LGA1200',H510:'LGA1200',H610:'LGA1700'};
 const aioRam=a=>a.ram_type||(a.ddr5?'DDR5':'DDR4');
@@ -346,7 +347,7 @@ function renderRig(){
 function update(){
   let total=0;
   ROWS.forEach(r=>{const x=get(r.k);if(x)total+=x.price;});
-  const mk=MARKUP,sale=mk?Math.round(total*(1+mk/100)/10)*10:total;
+  const mk=MARKUP,sale=(mk?Math.round(total*(1+mk/100)/10)*10:total)+LABOR;
   window._sale=sale;$('total').textContent=money(sale);
   $('power').textContent=MODE==='aio'?'':(needWatt()?'Tavsiya etilgan PSU: ~'+needWatt()+' W':'');
   const need=ROWS.filter(r=>r.req),done=need.filter(r=>sel[r.k]!=null).length;
@@ -416,7 +417,7 @@ function reset(){sel={};step=0;document.querySelectorAll('.prof').forEach(b=>b.c
 function post(url,body){return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('[name=csrfmiddlewaretoken]').value},body:JSON.stringify(body||{})});}
 async function save(){
   const n=prompt('Yig‘ma nomi:','Mening PCim');if(!n)return;
-  const r=await post('/api/builds/save/',{name:n,data:{s:sel},total:window._sale||0});
+  const r=await post('/api/builds/save/',{name:n,mode:MODE,data:{s:sel},total:window._sale||0});
   toast(r.ok?'Saqlandi':'Saqlanmadi');saved();
 }
 async function saved(){

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from builder.models import (
+from products.models import (
     CPU, Motherboard, RAM, Cooler, GPU, SSD, HDD, PSU, Case,
     Monitor, KeyboardMouse, Headset,
 )

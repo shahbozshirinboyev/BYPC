@@ -4,7 +4,7 @@ Idempotent: qayta ishga tushirilsa takroriy yozmaydi, balki yangilaydi.
 """
 from django.core.management.base import BaseCommand
 
-from builder.models import (
+from products.models import (
     CPU, Motherboard, RAM, Cooler, AIO, GPU, SSD, HDD, PSU, Case,
     Monitor, Printer, KeyboardMouse, Headset,
 )

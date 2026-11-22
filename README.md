@@ -2,6 +2,14 @@
 
 Zamonaviy, sodda PC yig'ish kalkulyatori va qismlar katalogi. Asl HTML fayli o'rniga to'liq Django ilovasi.
 
+## Loyiha tuzilishi
+
+- **`products/`** — faqat katalog mahsulotlari: CPU, AIO, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&M, HEADSET.
+- **`assembly/`** — PC va AIO uchun yig'ish sozlamalari hamda hisob-kitob tarixi (`PC ASSEMBLY SETTINGS`, `PC CALCULATIONS`, `AIO ASSEMBLY SETTINGS`, `AIO CALCULATIONS`).
+- **`builder/`** — buyurtmalar, profillar, saqlangan yig'malar, umumiy sozlamalar va sayt sahifalari.
+
+Mahsulot jadvallari eski `builder_*` nomlarida qoldirilgan, shuning uchun mavjud mahsulotlar va ID'lar migratsiyadan keyin ham saqlanadi.
+
 ## Interfeys kontseptsiyasi
 
 Uchta namunaviy sayt tahlili asosida yaratilgan:
@@ -100,9 +108,13 @@ Savat hali ham server sessionida saqlanadi (mijoz tomonidagi `localStorage` emas
 
 ## Admin panel
 
-Modellar aniq tartibda chiqadi: CPU, AIO (Моноблоки), MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, **PRINTER**, KB&M, HEADSET, **BUYURTMALAR** (ichida **BUYURTMA QATORLARI**), **PROFIL**, SAVED BUILDS, SETTINGS.
+Admin panel uchta bo'limga ajratilgan:
 
-Admin paneliga faqat **Admin** roli yoki superuser kira oladi. Har bir modelda `list_filter` va `search_fields` mavjud. Ustama va dollar kursi **SETTINGS** dan sozlanadi.
+- **MAHSULOTLAR** — faqat mahsulotlar: CPU, AIO (Моноблоки), MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&M, HEADSET;
+- **YIG'ISH SOZLAMALARI** — PC va AIO sozlamalari hamda hisob tarixi: `PC ASSEMBLY SETTINGS`, `PC CALCULATIONS`, `AIO ASSEMBLY SETTINGS`, `AIO CALCULATIONS`;
+- **BUYURTMALAR VA SOZLAMALAR** — BUYURTMALAR (ichida BUYURTMA QATORLARI), PROFILLAR, SAVED BUILDS, SETTINGS.
+
+Admin paneliga faqat **Admin** roli yoki superuser kira oladi. Har bir modelda `list_filter` va `search_fields` mavjud. Ustama % va ish haqi PC/AIO sozlamalaridan, dollar kursi esa **SETTINGS** dan olinadi. Kalkulyatorda **Saqlash** bosilganda hisob tarixiga ham yozuv qo'shiladi.
 
 ## Ma'lumotlar
 

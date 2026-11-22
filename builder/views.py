@@ -15,10 +15,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
-from .models import (
+from products.models import (
     CPU, Motherboard, RAM, Cooler, AIO, GPU, SSD, HDD, PSU, Case,
-    Monitor, Printer, KeyboardMouse, Headset, SavedBuild, Settings,
-    Profile, Order, OrderItem, ROLE_CHOICES, ORDER_FLOW,
+    Monitor, Printer, KeyboardMouse, Headset,
+)
+from assembly.models import (
+    PCAssemblySettings, AIOAssemblySettings, PCCalculation, AIOCalculation,
+)
+from .models import (
+    SavedBuild, Settings, Profile, Order, OrderItem, ROLE_CHOICES, ORDER_FLOW,
 )
 from .templatetags.bypc_tags import phone_format
 
@@ -67,6 +72,56 @@ def _settings():
     return conf or Settings.objects.create()
 
 
+def _assembly_conf(mode):
+    """PC yoki AIO uchun yig'ish sozlamalarini qaytaradi (yo'q bo'lsa yaratadi)."""
+    model = AIOAssemblySettings if mode == "aio" else PCAssemblySettings
+    conf = model.objects.first()
+    return conf or model.objects.create()
+
+
+def _selected_components(data):
+    """Kalkulyator tanlovini (kind -> id) bazadagi mahsulotlarga aylantiradi."""
+    selected = (data or {}).get("s", {}) if isinstance(data, dict) else {}
+    items, subtotal = [], Decimal("0")
+    for kind, item_id in selected.items():
+        model = FIELDS.get(kind, (None,))[0]
+        if not model or item_id is None:
+            continue
+        obj = model.objects.filter(pk=item_id).first()
+        if not obj:
+            continue
+        price = Decimal(str(obj.price))
+        items.append({"kind": kind, "id": obj.pk, "name": obj.name,
+                      "price": float(price)})
+        subtotal += price
+    return items, subtotal
+
+
+def _record_calculation(request, mode, data):
+    """Bajarilgan hisob-kitobni PC yoki AIO tarixiga yozadi."""
+    mode = "aio" if mode == "aio" else "pc"
+    items, subtotal = _selected_components(data)
+    if not items:
+        return None
+    conf = _assembly_conf(mode)
+    markup = Decimal(str(conf.markup_percent or 0))
+    labor = Decimal(str(conf.labor_cost_usd or 0))
+    total = (subtotal * (1 + markup / 100) + labor).quantize(Decimal("0.01"))
+    rate = Decimal(str(_settings().usd_to_uzs or 0))
+    total_uzs = int((total * rate).quantize(Decimal("1"))) if rate > 0 else 0
+    model = AIOCalculation if mode == "aio" else PCCalculation
+    return model.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        session_key=_owner(request),
+        components={"items": items},
+        subtotal_usd=subtotal,
+        markup_percent=markup,
+        labor_cost_usd=labor,
+        total_usd=total,
+        total_uzs=total_uzs,
+    )
+
+
 def _serialize(model, fields):
     items = list(model.objects.values(*fields.split()))
     for item in items:
@@ -77,11 +132,13 @@ def _serialize(model, fields):
 def _render_builder(request, mode):
     """Kalkulyatorni tanlangan rejimda ko'rsatadi (pc / aio)."""
     conf = _settings()
+    assembly_conf = _assembly_conf(mode)
     catalog = {key: _serialize(model, fields) for key, (model, fields) in FIELDS.items()}
     return render(request, "builder/index.html", {
         "catalog": catalog,
         "rate": str(conf.usd_to_uzs),
-        "markup": str(conf.markup_percent),
+        "markup": str(assembly_conf.markup_percent),
+        "labor": str(assembly_conf.labor_cost_usd or 0),
         "mode": mode,
         "mode_label": "AIO assembly" if mode == "aio" else "PC assembly",
         "role": role_of(request.user),
@@ -638,6 +695,7 @@ def save_build(request):
         data=payload.get("data", {}),
         total=payload.get("total", 0) or 0,
     )
+    _record_calculation(request, payload.get("mode", "pc"), payload.get("data", {}))
     return JsonResponse({"ok": True, "id": obj.id, "name": obj.name})
 
 

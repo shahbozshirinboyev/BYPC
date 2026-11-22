@@ -1,0 +1,215 @@
+"""Mahsulot modellari.
+
+Bu ilovada faqat katalog mahsulotlari saqlanadi:
+CPU, AIO, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR,
+PRINTER, KB&M, HEADSET.
+
+Jadvallar nomi (`db_table`) eski `builder_*` nomlarida qoldirilgan —
+shu tufayli mavjud mahsulotlar va ularning ID'lari saqlanib qoladi.
+"""
+from django.db import models
+
+
+SOCKET_CHOICES = [("LGA1700", "LGA1700"), ("AM4", "AM4"), ("AM5", "AM5")]
+RAM_CHOICES = [("DDR3", "DDR3"), ("DDR4", "DDR4"), ("DDR5", "DDR5")]
+MB_FORM_CHOICES = [("ATX", "ATX"), ("Micro-ATX", "Micro-ATX"), ("Mini-ITX", "Mini-ITX")]
+SSD_INTERFACE_CHOICES = [("NVMe", "NVMe"), ("SATA", "SATA")]
+HDD_FORM_CHOICES = [('3.5"', '3.5"'), ('2.5"', '2.5"')]
+EFFICIENCY_CHOICES = [("None", "No certification"), ("80+ Bronze", "80+ Bronze"),
+                      ("80+ Gold", "80+ Gold"), ("80+ Platinum", "80+ Platinum")]
+COOLER_CHOICES = [("Air", "Havo"), ("Liquid", "Suvli")]
+AIO_CHIPSET_CHOICES = [("H61", "H61"), ("H81", "H81"), ("H410", "H410"),
+                       ("H510", "H510"), ("H610", "H610"), ("Other", "Boshqa")]
+AIO_SIZE_CHOICES = [('24"', '24"'), ('27"', '27"'), ('32"', '32"')]
+AIO_PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("—", "—")]
+CASE_TYPE_CHOICES = [("Mini", "Mini-tower"), ("Mid", "Mid-tower"), ("Full", "Full-tower")]
+PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("OLED", "OLED")]
+CONNECTION_CHOICES = [("Wired", "Simli"), ("Wireless", "Simsiz")]
+PRINTER_TYPE_CHOICES = [("Laser", "Laser"), ("Inkjet", "Siyohli"), ("LED", "LED")]
+PAPER_SIZE_CHOICES = [("A4", "A4"), ("A3", "A3"), ("A4+A3", "A4 + A3")]
+
+
+class Component(models.Model):
+    """Barcha qismlar uchun umumiy asos."""
+    name = models.CharField("Nomi", max_length=200)
+    price = models.DecimalField("Narxi (USD)", max_digits=10, decimal_places=2, default=0)
+    brand = models.CharField("Brend", max_length=50, blank=True, default="")
+
+    class Meta:
+        abstract = True
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.name
+
+
+class CPU(Component):
+    socket = models.CharField("Soket", max_length=20, choices=SOCKET_CHOICES, blank=True)
+    cores = models.PositiveIntegerField("Yadrolar soni", default=4)
+    watt = models.PositiveIntegerField("Quvvat (W)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "CPU"
+        verbose_name_plural = "CPU"
+        db_table = "builder_cpu"
+
+
+class Motherboard(Component):
+    socket = models.CharField("Soket", max_length=20, choices=SOCKET_CHOICES, blank=True)
+    ram_type = models.CharField("RAM turi", max_length=10, choices=RAM_CHOICES, blank=True)
+    form_factor = models.CharField("Form-faktor", max_length=20, choices=MB_FORM_CHOICES, blank=True)
+    m2_slots = models.PositiveIntegerField("M.2 slotlari", default=1)
+
+    class Meta(Component.Meta):
+        verbose_name = "MB"
+        verbose_name_plural = "MB"
+        db_table = "builder_motherboard"
+
+
+class RAM(Component):
+    ram_type = models.CharField("RAM turi", max_length=10, choices=RAM_CHOICES, blank=True)
+    capacity_gb = models.PositiveIntegerField("Hajmi (GB)", default=0)
+    speed_mhz = models.PositiveIntegerField("Tezligi (MHz)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "RAM"
+        verbose_name_plural = "RAM"
+        db_table = "builder_ram"
+
+
+class Cooler(Component):
+    cooler_type = models.CharField("Turi", max_length=10, choices=COOLER_CHOICES, default="Air")
+    sockets = models.CharField("Qo'llab-quvvatlagan soketlar", max_length=100,
+                               help_text="Vergul bilan: LGA1700,AM4,AM5", default="")
+    cooling_watt = models.PositiveIntegerField("Sovutish quvvati (W)", default=0)
+    height_mm = models.PositiveIntegerField("Balandligi (mm)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "COOLER"
+        verbose_name_plural = "COOLER"
+        db_table = "builder_cooler"
+
+
+class AIO(Component):
+    """All-in-one monoblock kompyuterlar."""
+    screen_size = models.CharField("Ekran o'lchami", max_length=5, choices=AIO_SIZE_CHOICES, default='24"')
+    panel = models.CharField("Matritsa", max_length=5, choices=AIO_PANEL_CHOICES, default="IPS")
+    chipset = models.CharField("Chipset", max_length=10, choices=AIO_CHIPSET_CHOICES, default="H610")
+    curved = models.BooleanField("Egri ekran", default=False)
+    webcam = models.BooleanField("Veb-kamera", default=True)
+    wifi = models.BooleanField("WiFi", default=True)
+    m2_nvme = models.BooleanField("M.2 NVMe (eskisa)", default=False)
+    m2_slots = models.PositiveIntegerField("M.2 NVMe slotlari", default=0)
+    ram_type = models.CharField("RAM turi", max_length=10, choices=RAM_CHOICES, default="DDR4")
+    ddr5 = models.BooleanField("DDR5 (eskisa)", default=False)
+    color = models.CharField("Rang", max_length=20, default="white")
+    model_code = models.CharField("Model kodi", max_length=30, blank=True, default="")
+    note = models.CharField("Izoh", max_length=100, blank=True, default="")
+
+    class Meta(Component.Meta):
+        verbose_name = "AIO (monoblock)"
+        verbose_name_plural = "AIO (Моноблоки)"
+        db_table = "builder_aio"
+
+
+class GPU(Component):
+    chipset = models.CharField("Chipset", max_length=20, default="NVIDIA")
+    vram_gb = models.PositiveIntegerField("Videoxotira (GB)", default=0)
+    watt = models.PositiveIntegerField("Quvvat (W)", default=0)
+    length_mm = models.PositiveIntegerField("Uzunligi (mm)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "GPU"
+        verbose_name_plural = "GPU"
+        db_table = "builder_gpu"
+
+
+class SSD(Component):
+    interface = models.CharField("Interfeys", max_length=10, choices=SSD_INTERFACE_CHOICES, default="NVMe")
+    capacity_gb = models.PositiveIntegerField("Hajmi (GB)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "SSD"
+        verbose_name_plural = "SSD"
+        db_table = "builder_ssd"
+
+
+class HDD(Component):
+    form_factor = models.CharField("Form-faktor", max_length=10, choices=HDD_FORM_CHOICES, default='3.5"')
+    capacity_gb = models.PositiveIntegerField("Hajmi (GB)", default=0)
+    rpm = models.PositiveIntegerField("Aylanish tezligi (rpm)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "HDD"
+        verbose_name_plural = "HDD"
+        db_table = "builder_hdd"
+
+
+class PSU(Component):
+    watt = models.PositiveIntegerField("Quvvat (W)", default=0)
+    efficiency = models.CharField("Sertifikat", max_length=20, choices=EFFICIENCY_CHOICES, default="None")
+    modular = models.BooleanField("Modulli", default=False)
+
+    class Meta(Component.Meta):
+        verbose_name = "PSU"
+        verbose_name_plural = "PSU"
+        db_table = "builder_psu"
+
+
+class Case(Component):
+    case_type = models.CharField("Korpus turi", max_length=10, choices=CASE_TYPE_CHOICES, default="Mid")
+    form_factors = models.CharField("Mos platalar", max_length=100,
+                                    help_text="Vergul bilan: ATX,Micro-ATX,Mini-ITX", default="ATX")
+    max_gpu_length = models.PositiveIntegerField("Maks. GPU uzunligi (mm)", default=0)
+    max_cooler_height = models.PositiveIntegerField("Maks. sovutgich balandligi (mm)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "CASE"
+        verbose_name_plural = "CASE"
+        db_table = "builder_case"
+
+
+class Monitor(Component):
+    panel = models.CharField("Matritsa", max_length=10, choices=PANEL_CHOICES, blank=True)
+    size_inch = models.PositiveIntegerField("Diagonali (dyuym)", default=0)
+    refresh_hz = models.PositiveIntegerField("Yangilanish (Hz)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "MONITOR"
+        verbose_name_plural = "MONITOR"
+        db_table = "builder_monitor"
+
+
+class Printer(Component):
+    printer_type = models.CharField("Turi", max_length=10, choices=PRINTER_TYPE_CHOICES, default="Laser")
+    connection = models.CharField("Ulanish", max_length=10, choices=CONNECTION_CHOICES, default="Wired")
+    paper_size = models.CharField("Qog'oz o'lchami", max_length=10, choices=PAPER_SIZE_CHOICES, default="A4")
+    color_print = models.BooleanField("Rangli chop etish", default=True)
+    duplex = models.BooleanField("Ikki tomonlama", default=False)
+    speed_ppm = models.PositiveIntegerField("Tezligi (ppm)", default=0)
+
+    class Meta(Component.Meta):
+        verbose_name = "PRINTER"
+        verbose_name_plural = "PRINTER"
+        db_table = "builder_printer"
+
+
+class KeyboardMouse(Component):
+    connection = models.CharField("Ulanish", max_length=10, choices=CONNECTION_CHOICES, default="Wired")
+    layout = models.CharField("Tartib", max_length=20, default="UZ/RU/EN")
+
+    class Meta(Component.Meta):
+        verbose_name = "KB&M"
+        verbose_name_plural = "KB&M"
+        db_table = "builder_keyboardmouse"
+
+
+class Headset(Component):
+    """Quloqchin / headset — ixtiyoriy aksessuar."""
+    connection = models.CharField("Ulanish", max_length=10, choices=CONNECTION_CHOICES, default="Wired")
+    surround = models.BooleanField("Ovoz atrofida (surround)", default=False)
+
+    class Meta(Component.Meta):
+        verbose_name = "HEADSET"
+        verbose_name_plural = "HEADSET"
+        db_table = "builder_headset"

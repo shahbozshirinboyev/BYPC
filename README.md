@@ -36,8 +36,8 @@ python manage.py runserver
 - Monitorlar katalogi: http://127.0.0.1:8000/monitors/
 - Printerlar katalogi: http://127.0.0.1:8000/printers/
 - Kirish / ro'yxatdan o'tish: `/login/`, `/register/`
-- Profil: `/profile/`; sotuvchi savati va buyurtmalari: `/seller/`
-- Buyurtma tafsiloti: `/seller/orders/<pk>/`; tahrirlash: `/seller/orders/<pk>/edit/`; holat: `POST /seller/orders/<pk>/status/`; eksport: `/seller/export/`
+- Profil: `/profile/`; savat: `/cart/`; buyurtmalar: `/orders/` (eski `/seller/` va `/seller/orders/` ham ishlaydi)
+- Buyurtma tafsiloti: `/orders/<pk>/`; tahrirlash: `/orders/<pk>/edit/`; holat: `POST /orders/<pk>/status/`; eksport: `/orders/export/`
 - Admin: http://127.0.0.1:8000/admin/ — `admin` / `admin123` (o'zgartiring)
 - Muhit: Python 3.11.0, Django 5.2.19, Pipenv, SQLite (`db.sqlite3`)
 
@@ -88,7 +88,7 @@ AIO yozuvi admin paneldan kiritilganda **RAM turi** va **M.2 slotlari soni** saq
 
 ## Katalog sahifalari
 
-`/monitors/` va `/printers/` — mustaqil kataloglar: qidiruv, tur bo'yicha filtr va narx bo'yicha saralash. Narxlar admin panelidan boshqariladi. Sotuvchi bu yerdan qismni savatga qo'sha olmaydi — savat `/seller/` sahifasida, barcha guruhlar (PC, AIO, monitor, printer) bitta interfeysda.
+`/monitors/` va `/printers/` — mustaqil kataloglar: qidiruv, tur bo'yicha filtr va narx bo'yicha saralash. Sotuvchi/admin kartochkadagi “Savatga qo'shish” tugmasi orqali mahsulotni `/cart/` ga qo'shadi.
 
 ## Buyurtma boshqarish
 
@@ -98,11 +98,12 @@ Mexanizmlar:
 
 - **Serverda jami hisoblash** — savatdagi narx sessiondan emas, katalogdan qayta o'linadi; `OrderItem` qatorlari va `order_number = ORDER#<pk>` yaratiladi (`_create_order`, `transaction.atomic`);
 - **Ruxsatlar** — sotuvchi faqat o'z buyurtmalarini ko'radi, `NEW/AGREED/QUEUED/CANCELLED` holatlarini belgilay oladi; admin hamma holatni qo'yadi, hammasini ko'radi va o'chiradi;
-- **Ro'yxat** — holat tablari (soni bilan, `DELIVERED` va `Yakunlangan` takrorlanmaydi), telefon qidiruvi (9/12 xonalik), sana oralig'i, admin uchun sotuvchi filtri, 20 tadan sahifalash (filtrlar saqlanadi), kun bo'yicha guruhlash;
-- **Tahrirlash** — `seller/orders/<pk>/edit/`: klient, yetkazish, manzil (`region/district/city/landmark`), vaqt va to'lov ma'lumotlari; jami qatorlar bo'yicha qayta hisoblanadi;
-- **Tafsilot** — `seller/orders/<pk>/`, yetkazish turiga mos holat oqimi, to'lov qoldigi, XHR orqali holat yangilash (`POST .../status/`);
-- **Eksport** — `seller/export/?tab=...&date_from=...&date_to=...` (CSV, BOM bilan, telefon formatlangan, faol filtrlar hisobga olinadi);
-- **Katalogdan savatga** — sotuvchi monitor/printer kartochkasidagi “Savatga qo'shish” tugmasi orqali qismni qo'shadi.
+- **Ro'yxat** — `/orders/` da holat tablari (soni bilan, `DELIVERED` va `Yakunlangan` takrorlanmaydi), telefon qidiruvi (9/12 xonalik), sana oralig'i, admin uchun sotuvchi filtri, 20 tadan sahifalash, kun bo'yicha guruhlash;
+- **Savat** — `/cart/` alohida sahifa. Narx sessionda emas, buyurtma yaratilayotganda bazadan qayta hisoblanadi; jami USD va so'm serverda belgilanadi.
+- **Savatga qo'shish** — PC/AIO yig'masi tayyor bo'lgach builder'dagi “Savatga qo'shish” tugmasi orqali, monitor/printer esa katalog kartochkasidagi tugma orqali `/cart/` ga qo'shiladi.
+- **Tahrirlash** — `orders/<pk>/edit/`: klient, yetkazish, manzil (`region/district/city/landmark`), vaqt va to'lov ma'lumotlari; jami qatorlar bo'yicha qayta hisoblanadi;
+- **Tafsilot** — `orders/<pk>/`, yetkazish turiga mos holat oqimi, to'lov qoldigi, XHR orqali holat yangilash (`POST .../status/`);
+- **Eksport** — `orders/export/?tab=...&date_from=...&date_to=...` (CSV, BOM bilan, telefon formatlangan, faol filtrlar hisobga olinadi);
 
 Savat hali ham server sessionida saqlanadi (mijoz tomonidagi `localStorage` emas).
 

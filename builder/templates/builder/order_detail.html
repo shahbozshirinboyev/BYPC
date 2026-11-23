@@ -23,7 +23,7 @@ td.num,th.num{text-align:right}
   <div><h1>{{ order.display_order_number }}</h1><p>{{ order.created_at|date:"d.m.Y H:i" }} · {{ order.seller.username }}</p></div>
   <span class="pill">{{ order.status_display }} / {{ order.get_payment_status_display }}</span>
 </div>
-<p style="margin-top:0"><a href="{% url 'seller' %}" style="color:var(--acc);text-decoration:none">← Savat / Buyurtmalarga qaytish</a></p>
+<p style="margin-top:0"><a href="{% url 'orders_list' %}" style="color:var(--acc);text-decoration:none">← Buyurtmalarga qaytish</a></p>
 <div class="grid2">
   <div style="display:grid;gap:16px">
     <div class="cardbox">

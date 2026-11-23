@@ -1,0 +1,63 @@
+{% extends 'builder/_page_base.html' %}
+{% load bypc_tags %}
+{% block title %}Buyurtmalar{% endblock %}
+{% block style %}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs a{padding:8px 14px;border-radius:9px;background:var(--soft);color:var(--ink);text-decoration:none;font:600 13px Onest,sans-serif}
+.tabs a.on{background:var(--ink);color:var(--panel)}
+.tabs a small{opacity:.6;margin-left:4px;font:600 11px "JetBrains Mono",monospace}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.toolbar input,.toolbar select{max-width:100%}
+.ostatus{font:700 10px "JetBrains Mono",monospace;color:var(--acc)}
+.orderrow{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);text-decoration:none;color:var(--ink)}
+.orderrow:hover{color:var(--acc)}
+.orderrow small{display:block;color:var(--mute)}
+.dayhead{font:700 10px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--mute);padding:12px 0 4px}
+.pager{display:flex;gap:6px;justify-content:center;margin-top:14px}
+.pager a,.pager span{padding:6px 10px;border-radius:8px;background:var(--soft);color:var(--ink);text-decoration:none;font-size:12px}
+.pager .on{background:var(--ink);color:var(--panel)}
+{% endblock %}
+{% block content %}
+<div class="pagehead">
+  <div><h1>Buyurtmalar</h1><p>Holat, to'lov va qidiruv bo'yicha buyurtmalarni boshqaring</p></div>
+  <a class="btn ghost small" href="{% url 'export_orders' %}?{{ tab_base }}&tab={{ tab }}">CSV eksport</a>
+</div>
+<div class="cardbox">
+  <form class="toolbar" method="get">
+    <input type="hidden" name="tab" value="{{ tab }}">
+    <input type="search" name="phone" value="{{ filters.phone }}" placeholder="Telefon bo'yicha..." aria-label="Telefon">
+    <input type="date" name="date_from" value="{{ filters.date_from }}" aria-label="Boshlanish sanasi">
+    <input type="date" name="date_to" value="{{ filters.date_to }}" aria-label="Tugash sanasi">
+    {% if sellers %}<select name="seller" aria-label="Sotuvchi"><option value="">Barcha sotuvchilar</option>{% for s in sellers %}<option value="{{ s.id }}" {% if filters.seller == s.id|stringformat:'s' %}selected{% endif %}>{{ s.username }}</option>{% endfor %}</select>{% endif %}
+    <button class="btn small" type="submit">Filtrlash</button>
+  </form>
+  <div class="tabs">
+    <a href="?{{ tab_base }}&tab=all" class="{% if tab == 'all' %}on{% endif %}">Barchasi <small>{{ counts.all }}</small></a>
+    {% for value, label in status_choices %}
+      <a href="?{{ tab_base }}&tab={{ value }}" class="{% if tab == value %}on{% endif %}">{{ label }} <small>{{ counts|get_item:value }}</small></a>
+    {% endfor %}
+    <a href="?{{ tab_base }}&tab=completed" class="{% if tab == 'completed' %}on{% endif %}">Yakunlangan <small>{{ counts.completed }}</small></a>
+  </div>
+  {% for group in order_groups %}
+    <div class="dayhead">{{ group.date|date:"d.m.Y" }}</div>
+    {% for o in group.orders %}
+      <a class="orderrow" href="{% url 'order_detail' pk=o.pk %}">
+        <span><b>{{ o.display_order_number }}</b> · {{ o.client_name }}
+          <small>{{ o.client_phone|phone_format }} · {{ o.seller.username }} · {{ o.status_display }} / {{ o.get_payment_status_display }}</small></span>
+        <span><b>${{ o.total|floatformat:0 }}</b><small>Qoldiq: ${{ o.remaining_amount|floatformat:0 }}</small></span>
+      </a>
+    {% endfor %}
+  {% empty %}
+    <p style="color:var(--mute);margin:0">Bu filtr bo'yicha buyurtma yo'q.</p>
+  {% endfor %}
+  {% if orders.paginator.num_pages > 1 %}
+  <div class="pager">
+    {% if orders.has_previous %}<a href="?{{ pager_base }}&page={{ orders.previous_page_number }}">← Oldingi</a>{% endif %}
+    {% for n in orders.paginator.page_range %}
+      <a href="?{{ pager_base }}&page={{ n }}" class="{% if n == orders.number %}on{% endif %}">{{ n }}</a>
+    {% endfor %}
+    {% if orders.has_next %}<a href="?{{ pager_base }}&page={{ orders.next_page_number }}">Keyingi →</a>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

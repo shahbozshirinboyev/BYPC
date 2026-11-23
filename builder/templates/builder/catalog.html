@@ -39,7 +39,7 @@
 <div class="grid" id="grid"></div>
 {{ items|json_script:"items-data" }}
 {% if role == 'seller' or role == 'admin' %}
-<form id="cart-add-form" method="post" action="{% url 'seller' %}">{% csrf_token %}
+<form id="cart-add-form" method="post" action="{% url 'cart' %}">{% csrf_token %}
   <input type="hidden" name="action" value="add">
   <input type="hidden" name="kind" id="cart-kind" value="{{ key }}">
   <input type="hidden" name="id" id="cart-id" value="">

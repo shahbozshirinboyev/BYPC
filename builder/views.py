@@ -44,13 +44,7 @@ FIELDS = {
     "head": (Headset, "id name price brand connection surround"),
 }
 
-# Sotuvchi savatiga qo'shish uchun guruhlar
-SELLER_GROUPS = {
-    "pc": ("PC qismlari", ["cpu", "mb", "ram", "cool", "gpu", "ssd", "hdd", "psu", "case", "kbm", "head"]),
-    "aio": ("AIO monoblock", ["aio"]),
-    "mon": ("Monitorlar", ["mon"]),
-    "printer": ("Printerlar", ["printer"]),
-}
+
 
 
 def role_of(user):
@@ -383,8 +377,20 @@ def _create_order(request, cart, post):
     return order
 
 
+def _cart_redirect(request, fallback="cart"):
+    nxt = request.POST.get("next", "")
+    if nxt.startswith("/") and not nxt.startswith("//"):
+        return redirect(nxt)
+    return redirect(fallback)
+
+
 @login_required
-def seller(request):
+def seller_redirect(request):
+    return redirect("orders_list")
+
+
+@login_required
+def cart_view(request):
     role = role_of(request.user)
     if role not in ("seller", "admin"):
         messages.error(request, "Bu bo'lim faqat sotuvchi uchun.")
@@ -402,6 +408,26 @@ def seller(request):
                 cart.append({"kind": kind, "id": item.id, "name": item.name,
                              "price": float(item.price), "qty": qty})
                 messages.success(request, f"{item.name} savatga qo'shildi.")
+        elif action == "add_build":
+            try:
+                items = json.loads(request.POST.get("items", "[]"))
+            except (TypeError, ValueError):
+                items = []
+            added = 0
+            for row in items if isinstance(items, list) else []:
+                kind = (row or {}).get("kind", "")
+                model = FIELDS[kind][0] if kind in FIELDS else None
+                item = model.objects.filter(pk=(row or {}).get("id")).first() if model else None
+                if not item:
+                    continue
+                qty = max(1, min(99, int((row or {}).get("qty", 1) or 1)))
+                cart.append({"kind": kind, "id": item.id, "name": item.name,
+                             "price": float(item.price), "qty": qty})
+                added += 1
+            if added:
+                messages.success(request, f"Yig'ma savatga qo'shildi ({added} ta qism).")
+            else:
+                messages.error(request, "Savatga qo'shish uchun mos qism topilmadi.")
         elif action == "remove":
             try:
                 cart.pop(int(request.POST.get("index", -1)))
@@ -419,19 +445,25 @@ def seller(request):
                 messages.success(request, f"{order.display_order_number} buyurtma yaratildi (${order.total}).")
                 return redirect("order_detail", pk=order.pk)
         request.session["cart"] = cart
-        nxt = request.POST.get("next", "")
-        if nxt.startswith("/") and not nxt.startswith("//"):
-            return redirect(nxt)
-        return redirect("seller")
+        return _cart_redirect(request)
 
     cart, _ = _cart_with_live_prices(request.session.get("cart", []))
-    groups = {}
-    for gkey, (glabel, keys) in SELLER_GROUPS.items():
-        groups[gkey] = {
-            "label": glabel,
-            "items": [{"kind": k, "label": FIELDS[k][0]._meta.verbose_name,
-                       "list": _serialize(FIELDS[k][0], FIELDS[k][1])} for k in keys],
-        }
+    return render(request, "builder/cart.html", {
+        "role": role,
+        "cart": cart,
+        "cart_total": sum(Decimal(str(i["price"])) * i["qty"] for i in cart),
+        "payment_choices": Order._meta.get_field("payment_status").choices,
+        "payment_type_choices": Order._meta.get_field("payment_type").choices,
+        "delivery_choices": Order._meta.get_field("delivery_type").choices,
+    })
+
+
+@login_required
+def orders_list(request):
+    role = role_of(request.user)
+    if role not in ("seller", "admin"):
+        messages.error(request, "Bu bo'lim faqat sotuvchi uchun.")
+        return redirect("profile")
 
     qs = _orders_for_user(request)
     phone = request.GET.get("phone", "").strip()
@@ -457,7 +489,6 @@ def seller(request):
     if tab == "completed":
         qs = completed_qs
     elif tab == "DELIVERED":
-        # Yetkazilgan, lekin to'lanmaganlar alohida: PAID larni "Yakunlangan" oladi.
         qs = base_qs.filter(status="DELIVERED").exclude(payment_status="PAID")
     elif tab != "all" and tab in dict(Order._meta.get_field("status").choices):
         qs = qs.filter(status=tab)
@@ -483,20 +514,13 @@ def seller(request):
         else:
             order_groups.append({"date": day, "orders": [order]})
 
-    return render(request, "builder/seller.html", {
+    return render(request, "builder/orders.html", {
         "role": role,
-        "groups": groups,
-        "current_group": groups.get(request.GET.get("g", "pc"), groups["pc"]),
-        "cart": cart,
-        "cart_total": sum(Decimal(str(i["price"])) * i["qty"] for i in cart),
         "orders": page,
         "order_groups": order_groups,
         "counts": counts,
         "tab": tab,
         "status_choices": Order._meta.get_field("status").choices,
-        "payment_choices": Order._meta.get_field("payment_status").choices,
-        "payment_type_choices": Order._meta.get_field("payment_type").choices,
-        "delivery_choices": Order._meta.get_field("delivery_type").choices,
         "sellers": get_user_model().objects.filter(is_superuser=False).order_by("username") if role == "admin" else [],
         "pager_base": pager_base,
         "tab_base": tab_base,
@@ -641,10 +665,10 @@ def order_edit(request, pk):
 def order_delete(request, pk):
     if role_of(request.user) != "admin":
         messages.error(request, "Buyurtmani o'chirish faqat admin uchun.")
-        return redirect("seller")
+        return redirect("orders_list")
     get_object_or_404(Order, pk=pk).delete()
     messages.success(request, "Buyurtma o'chirildi.")
-    return redirect("seller")
+    return redirect("orders_list")
 
 
 @require_GET

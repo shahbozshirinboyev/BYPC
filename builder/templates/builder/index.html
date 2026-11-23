@@ -161,6 +161,8 @@ td button{padding:3px 8px;font-size:11px}
         <div class="mini" id="fit">0 / 8 qism tanlandi</div>
         <div class="mini" id="power" style="margin-top:6px"></div>
         <div class="toolrow"><div class="cur"><button id="usd" class="on">USD</button><button id="uzs">so’m</button></div><div class="iconrow"><button class="iconbtn" id="save" title="Saqlash" aria-label="Saqlash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg></button><button class="iconbtn" id="share" title="Ulashish" aria-label="Ulashish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.7 10.6l6.6-4M8.7 13.4l6.6 4"/></svg></button><button class="iconbtn" id="copy" title="Ro’yxatni nusxalash" aria-label="Ro’yxatni nusxalash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="iconbtn" id="reset" title="Tozalash" aria-label="Tozalash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v10"/><path d="M8 13h8l2 7H6z"/><path d="M9 16v4M12 16v4M15 16v4"/></svg></button></div></div>
+        {% if role == 'seller' or role == 'admin' %}<button class="main" id="add-build-cart" style="width:100%;margin-top:10px">Savatga qo'shish</button>
+        <form id="build-cart-form" method="post" action="{% url 'cart' %}" hidden>{% csrf_token %}<input type="hidden" name="action" value="add_build"><input type="hidden" name="items" id="build-cart-items"></form>{% endif %}
         <div id="msgs"></div>
       </div>
         <section class="panel recommend" id="recommend">
@@ -450,6 +452,13 @@ $('prev').onclick=()=>go(step-1);$('next').onclick=()=>go(step+1);
 $('reset').onclick=reset;
 $('save').onclick=save;$('share').onclick=share;
 $('usd').onclick=()=>setCur('USD');$('uzs').onclick=()=>setCur('UZS');
+const addBuildBtn=$('add-build-cart');
+if(addBuildBtn)addBuildBtn.onclick=()=>{
+  const items=ROWS.map(r=>{const x=get(r.k);return x?{kind:r.k,id:x.id,qty:1}:null;}).filter(Boolean);
+  if(!items.length){toast('Avval kamida bitta qism tanlang');return;}
+  $('build-cart-items').value=JSON.stringify(items);
+  $('build-cart-form').submit();
+};
 
 document.querySelectorAll('.prof').forEach(b=>b.onclick=()=>profile(b.dataset.p));
 $('copy').onclick=async()=>{let t='BYPC — Mening kompyuterim:\n';ROWS.forEach(r=>{const x=get(r.k);if(x)t+=r.t+': '+x.name+' ('+dollar(x.price)+')\n';});

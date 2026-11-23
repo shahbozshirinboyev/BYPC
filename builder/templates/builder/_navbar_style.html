@@ -16,14 +16,25 @@
 .nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
 .nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 .nav-toggle:focus-visible,.nm-item:focus-visible,.nm-theme:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.nav-menu{position:absolute;top:calc(100% + 12px);right:0;width:min(322px,calc(100vw - 40px));padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px var(--shadow),0 4px 14px var(--shadow);opacity:0;visibility:hidden;transform:translateY(-6px) scale(.985);transform-origin:top right;transition:opacity .16s ease,transform .16s ease,visibility .16s;z-index:60}
+.nav-menu{position:absolute;top:calc(100% + 12px);right:0;width:min(340px,calc(100vw - 32px));display:flex;flex-direction:column;gap:10px;opacity:0;visibility:hidden;transform:translateY(-6px) scale(.985);transform-origin:top right;transition:opacity .16s ease,transform .16s ease,visibility .16s;z-index:60}
 .nav-menu.open{opacity:1;visibility:visible;transform:none}
+.nm-close{align-self:flex-end;width:46px;height:46px;padding:0;display:grid;place-items:center;border:2px solid var(--acc);border-radius:13px;background:var(--panel);color:var(--acc);cursor:pointer;transition:.15s}
+.nm-close:hover{background:var(--acc);color:var(--acc-ink)}
+.nm-close svg{width:20px;height:20px}
+.nm-panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px var(--shadow),0 4px 14px var(--shadow);padding:10px}
+.nm-profile-row{display:flex;align-items:center;gap:2px}
+.nm-profile-row .nm-profile{flex:1}
+.nm-profile-row form{display:flex;margin:0}
+.nm-icon{width:36px;height:36px;padding:0;display:grid;place-items:center;border:0;border-radius:9px;background:transparent;color:var(--mute);cursor:pointer;transition:.14s}
+.nm-icon svg{width:18px;height:18px}
+.nm-icon:hover{background:var(--soft);color:var(--acc)}
 .nm-section{display:flex;flex-direction:column;gap:2px}
 .nm-item{display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:transparent;color:var(--ink);text-decoration:none;text-align:left;font:600 13.5px Onest,sans-serif;cursor:pointer;transition:.14s}
 .nm-item svg{width:18px;height:18px;flex:none;color:var(--mute);transition:.14s}
 .nm-item:hover{background:var(--soft);color:var(--acc)}
 .nm-item:hover svg,.nm-item.on svg{color:var(--acc)}
 .nm-item.on{background:var(--soft);color:var(--acc)}
+.nm-badge{margin-left:auto;flex:none;min-width:21px;height:21px;padding:0 7px;border-radius:99px;background:var(--acc);color:var(--acc-ink);font:700 11px/21px "JetBrains Mono",monospace;text-align:center}
 .nm-divider{height:1px;background:var(--line);margin:7px 6px}
 .nm-user{display:flex;flex-direction:column;gap:1px;padding:9px 12px 8px}
 .nm-user b{font:700 13.5px Onest,sans-serif;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

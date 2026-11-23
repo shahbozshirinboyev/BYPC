@@ -27,7 +27,7 @@
       <span class="role-chip {% if role == 'admin' %}on{% endif %}">Admin</span>
     </div>
     <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
-      {% if role == 'seller' or role == 'admin' %}<a class="btn" href="{% url 'seller' %}">Savat / Buyurtmalar</a>{% endif %}
+      {% if role == 'seller' or role == 'admin' %}<a class="btn" href="{% url 'cart' %}">Savat</a><a class="btn ghost" href="{% url 'orders_list' %}">Buyurtmalar</a>{% endif %}
       {% if role == 'admin' %}<a class="btn ghost" href="/admin/">Admin panel</a>{% endif %}
       <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn ghost" type="submit">Chiqish</button></form>
     </div>

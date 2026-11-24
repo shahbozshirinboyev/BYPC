@@ -114,8 +114,20 @@ class GPUAdmin(BaseAdmin):
 
 @admin.register(SSD, site=admin_site)
 class SSDAdmin(BaseAdmin):
-    list_display = ("name", "brand", "interface", "capacity_gb", "price")
-    list_filter = ("brand", "interface", "capacity_gb")
+    # Nom xususiyatlardan avtomatik yig'iladi (RAM/AIO kabi).
+    exclude = ("name", "model")
+    list_display = ("name_display", "brand", "interface", "capacity_gb", "form_factor",
+                    "speed_mbs", "pcie_gen", "price")
+    list_filter = ("brand", "interface", "capacity_gb", "form_factor", "pcie_gen")
+    fieldsets = (
+        ("Asosiy", {"fields": ("brand", "price")}),
+        ("Xususiyatlar", {"fields": ("capacity_gb", "interface", "form_factor",
+                                     "speed_mbs", "pcie_gen")}),
+    )
+
+    @admin.display(description="Name", ordering="name")
+    def name_display(self, obj):
+        return obj.name
 
 
 @admin.register(HDD, site=admin_site)

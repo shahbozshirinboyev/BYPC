@@ -45,6 +45,8 @@ CPU_GPU_CHOICES = [
 ]
 MB_FORM_CHOICES = [("ATX", "ATX"), ("Micro-ATX", "Micro-ATX"), ("Mini-ITX", "Mini-ITX")]
 SSD_INTERFACE_CHOICES = [("NVMe", "NVMe"), ("SATA", "SATA")]
+SSD_FORM_CHOICES = [('M.2', 'M.2'), ('2.5"', '2.5"')]
+SSD_PCIE_CHOICES = [("", "—"), ("Gen3", "Gen3"), ("Gen4", "Gen4"), ("Gen5", "Gen5")]
 HDD_FORM_CHOICES = [('3.5"', '3.5"'), ('2.5"', '2.5"')]
 EFFICIENCY_CHOICES = [("None", "No certification"), ("80+ Bronze", "80+ Bronze"),
                       ("80+ Gold", "80+ Gold"), ("80+ Platinum", "80+ Platinum")]
@@ -249,12 +251,40 @@ class GPU(Component):
 
 
 class SSD(Component):
-    interface = models.CharField("Interfeys", max_length=10, choices=SSD_INTERFACE_CHOICES, default="NVMe")
+    interface = models.CharField("Interfeys", max_length=10,
+                                 choices=SSD_INTERFACE_CHOICES, default="NVMe")
     capacity_gb = models.PositiveIntegerField("Hajmi (GB)", default=0)
+    form_factor = models.CharField("Form-faktor", max_length=8, choices=SSD_FORM_CHOICES, default="M.2")
+    speed_mbs = models.PositiveIntegerField("Tezligi (MB/s)", default=0)
+    pcie_gen = models.CharField("PCIe avlodi", max_length=5, choices=SSD_PCIE_CHOICES,
+                                blank=True, default="")
+    model = models.CharField("Model", max_length=60, blank=True, default="")
+
+    def build_name(self):
+        """Nom xususiyatlardan yig'iladi (RAM/AIO kabi)."""
+        cap = self.capacity_gb
+        size = (str(cap // 1000) + 'TB') if cap and cap % 1000 == 0 and cap >= 1000 else (
+            str(cap) + 'GB' if cap else "")
+        form = dict(SSD_FORM_CHOICES).get(self.form_factor, self.form_factor)
+        parts = [
+            self.brand,
+            self.model,
+            size,
+            self.interface,
+            form,
+        ]
+        return " ".join(p for p in parts if p).strip()[:200] or "SSD"
+
+    def save(self, *args, **kwargs):
+        self.name = self.build_name()
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"name"})
+        super().save(*args, **kwargs)
 
     class Meta(Component.Meta):
         verbose_name = "SSD"
-        verbose_name_plural = "SSD"
+        verbose_name_plural = "SSDs"
         db_table = "builder_ssd"
 
 

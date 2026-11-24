@@ -114,6 +114,26 @@ h2{font:800 26px "Bricolage Grotesque",sans-serif;margin:2px 0 3px;letter-spacin
 .ram-title{margin:0;font:700 13px/1.3 Onest,sans-serif}
 .ram-detail{font:600 11px/1.3 "JetBrains Mono",monospace;color:var(--mute);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em}
 .card-ram .pr{margin:0;font:800 16px "Bricolage Grotesque",sans-serif;color:var(--acc)}
+.cards.cards-ssd{grid-template-columns:repeat(auto-fill,minmax(420px,1fr))}
+.card-ssd{flex-direction:row;align-items:flex-start;gap:12px;padding:10px 12px;min-height:0}
+.ssd-shot{flex:none;width:88px;display:flex;align-items:center;justify-content:center;align-self:center}
+.ssd-m2{position:relative;width:88px;height:24px;border:1px solid var(--line);border-radius:3px;background:linear-gradient(160deg,rgba(43,76,255,.2),rgba(123,63,242,.12));box-shadow:0 4px 10px var(--shadow),inset 0 0 0 1px rgba(255,255,255,.3)}
+.ssd-m2:before{content:"";position:absolute;inset:3px 10px 3px 4px;border:1px dashed rgba(43,76,255,.42);border-radius:2px}
+.ssd-m2:after{content:"";position:absolute;right:-2px;top:2px;bottom:2px;width:5px;border-radius:0 2px 2px 0;background:repeating-linear-gradient(0deg,var(--acc) 0 2px,transparent 2px 5px);opacity:.8}
+.ssd-notch{position:absolute;z-index:2;right:-3px;top:50%;width:7px;height:5px;transform:translateY(-50%);border-radius:0 3px 3px 0;background:var(--panel);border:1px solid var(--line);border-left:0}
+.ssd-25{position:relative;width:76px;height:52px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(145deg,rgba(43,76,255,.18),rgba(123,63,242,.1));box-shadow:0 4px 10px var(--shadow),inset 0 0 0 1px rgba(255,255,255,.3)}
+.ssd-25:before{content:"";position:absolute;inset:5px;border:1px dashed rgba(43,76,255,.42);border-radius:4px}
+.ssd-25:after{content:"";position:absolute;right:10px;top:3px;width:14px;height:4px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--acc) 0 2px,transparent 2px 5px);opacity:.8}
+.ssd-ext{border-radius:9px}
+.ssd-ext:after{right:-6px;top:20px;width:8px;height:12px;border-radius:0 3px 3px 0;background:repeating-linear-gradient(0deg,var(--acc) 0 2px,transparent 2px 4px)}
+.ssd-cap{position:absolute;z-index:1;left:0;right:0;top:50%;transform:translateY(-55%);text-align:center;font:800 12px/1 "JetBrains Mono",monospace;color:var(--acc)}
+.ssd-label{position:absolute;z-index:1;left:0;right:0;bottom:5px;text-align:center;font:700 7px/1 "JetBrains Mono",monospace;color:var(--mute);letter-spacing:.1em}
+.ssd-m2 .ssd-cap{top:3px;transform:none;font-size:10px}
+.ssd-m2 .ssd-label{bottom:2px}
+.card-ssd .ssd-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.ssd-title{margin:0;font:700 13px/1.3 Onest,sans-serif;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ssd-detail{font:600 11px/1.3 "JetBrains Mono",monospace;color:var(--mute);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.02em}
+.card-ssd .pr{margin:0;font:800 16px "Bricolage Grotesque",sans-serif;color:var(--acc)}
 .stageFoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
 .stageFoot button:disabled{opacity:.35;cursor:default}
 .hintline{font-size:12px;color:var(--mute)}
@@ -301,6 +321,9 @@ const cpuCache=c=>{const v=String(c&&c.cache||'').trim();return v?(/\bmb\b/i.tes
 const cpuSpeed=c=>{const v=String(c&&c.memory_speed||'').trim();return v?(/\b(mhz|mt\/s)\b/i.test(v)?v:v+' MHz'):null;};
 const ramTitle=r=>[r.brand,r.capacity_gb?(r.capacity_gb+'GB'):'',r.ram_type,r.speed_mhz?(r.speed_mhz+'MHz'):''].filter(Boolean).join(' ')||String(r.name||'RAM');
 const ramInfo=r=>{const per=r.modules===2&&r.capacity_gb?r.capacity_gb/2:r.capacity_gb;return [per?(per+'x'+(r.modules===2?2:1)+' GB'):'',r.cl?('CL'+r.cl):'',r.form_factor==='SODIMM'?'SODIMM':'',r.radiator?'Radiator':'',r.long_dimm?'LongDIMM':'',r.rgb?'RGB':'',r.note].filter(Boolean).join(' · ');};
+const ssdForm=f=>f==='External'?'Tashqi':(f==='2.5"'?'2.5&quot;':(f||'—'));
+const ssdCap=g=>g?(g>=1000&&g%1000===0?(g/1000)+'TB':g+'GB'):'SSD';
+const ssdInfo=x=>[ssdForm(x.form_factor),x.interface,x.pcie_gen,x.speed_mbs?(x.speed_mbs+'MB/s'):''].filter(Boolean).join(' · ');
 function needWatt(){const c=get('cpu'),g=get('gpu');return(c||g)?Math.round((cpuW(c)+(g?g.watt:0)+75)*1.3/50)*50:0;}
 function allowed(k){
   let l=(DATA[k]||[]).slice();const c=get('cpu'),m=get('mb'),g=get('gpu'),co=get('cool'),cs=get('case');
@@ -361,7 +384,7 @@ function specs(k,x){
     x.modules===2?((x.capacity_gb/x.modules)+'x'+x.modules+'GB'):null,x.form_factor,
     x.cl?('CL'+x.cl):null,x.radiator?'Radiator':null,x.long_dimm?'LongDIMM':null,x.rgb?'RGB':null,x.note].filter(Boolean).join(' · ');
   const f={mb:['socket','ram_type','form_factor'],
-   cool:['cooler_type','cooling_watt','height_mm'],gpu:['chipset','vram_gb','length_mm'],ssd:['interface','capacity_gb'],
+   cool:['cooler_type','cooling_watt','height_mm'],gpu:['chipset','vram_gb','length_mm'],ssd:['interface','capacity_gb','form_factor','speed_mbs','pcie_gen','model'],
    hdd:['form_factor','capacity_gb','rpm'],psu:['watt','efficiency'],case:['case_type','form_factors'],
    mon:['panel','size_inch','refresh_hz'],kbm:['connection','layout'],head:['connection','surround']};
   return (f[k]||[]).map(a=>x[a]!=null&&x[a]!==''&&x[a]!==false?a+':'+x[a]:'').filter(Boolean).join('  ·  ');
@@ -402,6 +425,7 @@ function renderCards(){
   $('cards').classList.toggle('cards-aio',r.k==='aio');
   $('cards').classList.toggle('cards-cpu',r.k==='cpu');
   $('cards').classList.toggle('cards-ram',r.k==='ram');
+  $('cards').classList.toggle('cards-ssd',r.k==='ssd');
   $('cards').innerHTML=list.length?list.map(x=>{
    if(r.k==='aio'){
      const size=String(x.screen_size||'—').replace(/"/g,'');
@@ -438,6 +462,17 @@ function renderCards(){
        '<div class="ram-shot" aria-hidden="true">'+stick+(x.modules===2?stick:'')+'</div>'+
        '<div class="ram-info"><div class="ram-title">'+title+'</div>'+
        '<div class="ram-detail" title="'+detail+'">'+detail+'</div><span class="pr">'+money(x.price)+'</span></div></div>';
+   }
+   if(r.k==='ssd'){
+     const nm=String(x.name||'SSD').replace(/"/g,'&quot;'),detail=ssdInfo(x),cap=ssdCap(x.capacity_gb);
+     const icon=x.form_factor==='M.2'
+       ? '<div class="ssd-m2"><span class="ssd-notch"></span><span class="ssd-cap">'+cap+'</span><span class="ssd-label">M.2</span></div>'
+       : '<div class="ssd-25'+(x.form_factor==='External'?' ssd-ext':'')+'"><span class="ssd-cap">'+cap+'</span><span class="ssd-label">'+ssdForm(x.form_factor)+'</span></div>';
+     return '<div class="card card-ssd '+(sel.ssd===x.id?'sel':'')+'" data-id="'+x.id+'">'+
+       (sel.ssd===x.id?'<button class="unsel" data-unsel="1" title="Olib tashlash">×</button>':'')+
+       '<div class="ssd-shot" aria-hidden="true">'+icon+'</div>'+
+       '<div class="ssd-info"><div class="ssd-title" title="'+nm+'">'+nm+'</div>'+
+       '<div class="ssd-detail" title="'+detail+'">'+detail+'</div><span class="pr">'+money(x.price)+'</span></div></div>';
    }
    return '<div class="card '+(sel[r.k]===x.id?'sel':'')+'" data-id="'+x.id+'">'+
    (sel[r.k]===x.id?'<button class="unsel" data-unsel="1" title="Olib tashlash">×</button>':'')+'<span class="brand">'+(x.brand||'—')+'</span>'+

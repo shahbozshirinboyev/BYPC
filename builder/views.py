@@ -34,7 +34,7 @@ FIELDS = {
     "cool": (Cooler, "id name price brand cooler_type sockets cooling_watt height_mm"),
     "aio": (AIO, "id name price brand screen_size resolution screen_type panel chipset ram_type m2_slots hdd_ports webcam wifi bluetooth color model_code note"),
     "gpu": (GPU, "id name price brand chipset vram_gb watt length_mm"),
-    "ssd": (SSD, "id name price brand interface capacity_gb"),
+    "ssd": (SSD, "id name price brand interface capacity_gb form_factor speed_mbs pcie_gen model"),
     "hdd": (HDD, "id name price brand form_factor capacity_gb rpm"),
     "psu": (PSU, "id name price brand watt efficiency modular"),
     "case": (Case, "id name price brand case_type form_factors max_gpu_length max_cooler_height"),

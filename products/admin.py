@@ -22,8 +22,26 @@ class BaseAdmin(admin.ModelAdmin):
 
 @admin.register(CPU, site=admin_site)
 class CPUAdmin(BaseAdmin):
-    list_display = ("name", "brand", "socket", "cores", "watt", "price")
-    list_filter = ("brand", "socket", "cores")
+    list_display = ("name_display", "socket", "cores", "threads", "max_turbo_ghz",
+                    "base_power_w", "max_turbo_power_w", "price")
+    list_filter = ("socket", "cores", "threads")
+    search_fields = ("name",)
+    exclude = ("watt", "brand")
+    fieldsets = (
+        ("Asosiy", {"fields": ("name", "price")}),
+        ("CPU", {"fields": ("socket", "cores", "threads", "max_turbo_ghz", "cache",
+                            "base_power_w", "max_turbo_power_w")}),
+        ("Platforma", {"fields": ("memory_types", "memory_speed", "gpu_name")}),
+    )
+
+    @admin.display(description="Name", ordering="name")
+    def name_display(self, obj):
+        return obj.name
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "name":
+            kwargs["label"] = "Name"
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(Motherboard, site=admin_site)

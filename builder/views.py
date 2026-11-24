@@ -28,7 +28,7 @@ from .models import (
 from .templatetags.bypc_tags import phone_format
 
 FIELDS = {
-    "cpu": (CPU, "id name price brand socket cores watt"),
+    "cpu": (CPU, "id name price brand socket cores threads max_turbo_ghz cache base_power_w max_turbo_power_w memory_types memory_speed gpu_name watt"),
     "mb": (Motherboard, "id name price brand socket ram_type form_factor m2_slots"),
     "ram": (RAM, "id name price brand ram_type capacity_gb speed_mhz"),
     "cool": (Cooler, "id name price brand cooler_type sockets cooling_watt height_mm"),

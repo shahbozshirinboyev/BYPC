@@ -17,3 +17,9 @@
   max-width: 100%;
   box-sizing: border-box;
 }
+
+/* Label uzun bo'lsa ham bitta qatorda tursin (masalan: "Max Turbo Frequency (GHz):"). */
+.change-form .form-row .flex-container > label,
+.add-form .form-row .flex-container > label {
+  white-space: nowrap;
+}

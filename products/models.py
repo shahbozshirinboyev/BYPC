@@ -10,8 +10,36 @@ shu tufayli mavjud mahsulotlar va ularning ID'lari saqlanib qoladi.
 from django.db import models
 
 
-SOCKET_CHOICES = [("LGA1700", "LGA1700"), ("AM4", "AM4"), ("AM5", "AM5")]
+SOCKET_CHOICES = [
+    ("LGA1155", "LGA1155"), ("LGA1150", "LGA1150"), ("LGA1151", "LGA1151"),
+    ("LGA1200", "LGA1200"), ("LGA1700", "LGA1700"), ("LGA1851", "LGA1851"),
+    ("AM4", "AM4"), ("AM5", "AM5"),
+]
 RAM_CHOICES = [("DDR3", "DDR3"), ("DDR4", "DDR4"), ("DDR5", "DDR5")]
+CPU_MEMORY_TYPE_CHOICES = [
+    ("", "—"),
+    ("DDR3", "DDR3"), ("DDR4", "DDR4"), ("DDR5", "DDR5"),
+    ("DDR4/DDR5", "DDR4 / DDR5"),
+]
+CPU_GPU_CHOICES = [
+    ("", "None"),
+    ("Intel HD Graphics 2000", "Intel HD Graphics 2000"),
+    ("Intel HD Graphics 3000", "Intel HD Graphics 3000"),
+    ("Intel HD Graphics 4000", "Intel HD Graphics 4000"),
+    ("Intel HD Graphics 4600", "Intel HD Graphics 4600"),
+    ("Intel HD Graphics 530", "Intel HD Graphics 530"),
+    ("Intel UHD Graphics 630", "Intel UHD Graphics 630"),
+    ("Intel UHD Graphics 730", "Intel UHD Graphics 730"),
+    ("Intel UHD Graphics 750", "Intel UHD Graphics 750"),
+    ("Intel UHD Graphics 770", "Intel UHD Graphics 770"),
+    ("Intel Graphics (Xe-LPG)", "Intel Graphics (Xe-LPG)"),
+    ("AMD Radeon Vega 3", "AMD Radeon Vega 3"),
+    ("AMD Radeon Vega 8", "AMD Radeon Vega 8"),
+    ("AMD Radeon Vega 11", "AMD Radeon Vega 11"),
+    ("AMD Radeon Graphics (RDNA 2)", "AMD Radeon Graphics (RDNA 2)"),
+    ("AMD Radeon 760M", "AMD Radeon 760M"),
+    ("AMD Radeon 780M", "AMD Radeon 780M"),
+]
 MB_FORM_CHOICES = [("ATX", "ATX"), ("Micro-ATX", "Micro-ATX"), ("Mini-ITX", "Mini-ITX")]
 SSD_INTERFACE_CHOICES = [("NVMe", "NVMe"), ("SATA", "SATA")]
 HDD_FORM_CHOICES = [('3.5"', '3.5"'), ('2.5"', '2.5"')]
@@ -61,8 +89,19 @@ class Component(models.Model):
 
 class CPU(Component):
     socket = models.CharField("Soket", max_length=20, choices=SOCKET_CHOICES, blank=True)
-    cores = models.PositiveIntegerField("Yadrolar soni", default=4)
-    watt = models.PositiveIntegerField("Quvvat (W)", default=0)
+    cores = models.PositiveIntegerField("Total Cores", default=0)
+    threads = models.PositiveIntegerField("Total Threads", default=0)
+    max_turbo_ghz = models.DecimalField("Max Turbo Frequency (GHz)", max_digits=4,
+                                        decimal_places=2, null=True, blank=True)
+    cache = models.CharField("Cache", max_length=60, blank=True, default="")
+    base_power_w = models.PositiveIntegerField("Processor Base Power (W)", default=0)
+    max_turbo_power_w = models.PositiveIntegerField("Maximum Turbo Power (W)", null=True, blank=True)
+    memory_types = models.CharField("Memory Types", max_length=120, choices=CPU_MEMORY_TYPE_CHOICES,
+                                     blank=True, default="")
+    memory_speed = models.CharField("Memory Speed", max_length=60, blank=True, default="")
+    gpu_name = models.CharField("GPU Name", max_length=120, choices=CPU_GPU_CHOICES,
+                                blank=True, default="")
+    watt = models.PositiveIntegerField("Quvvat (W, eskisa)", default=0)
 
     class Meta(Component.Meta):
         verbose_name = "CPUs"

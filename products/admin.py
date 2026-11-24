@@ -1,9 +1,12 @@
+import json
+
 from django.contrib import admin
+from django.utils.html import format_html
 
 from bypc.admin_site import admin_site
 from .models import (
     CPU, Motherboard, RAM, Cooler, AIO, GPU, SSD, HDD, PSU, Case,
-    Monitor, Printer, KeyboardMouse, Headset,
+    Monitor, Printer, KeyboardMouse, Headset, AIO_SOCKET_BY_CHIPSET,
 )
 
 
@@ -12,6 +15,9 @@ class BaseAdmin(admin.ModelAdmin):
     list_display = ("name", "brand", "price")
     list_per_page = 200
     list_max_show_all = 1000
+
+    class Media:
+        css = {"all": ("products/css/admin_form.css",)}
 
 
 @admin.register(CPU, site=admin_site)
@@ -40,8 +46,32 @@ class CoolerAdmin(BaseAdmin):
 
 @admin.register(AIO, site=admin_site)
 class AIOAdmin(BaseAdmin):
-    list_display = ("name", "brand", "screen_size", "chipset", "panel", "ram_type", "m2_slots", "price")
-    list_filter = ("brand", "screen_size", "chipset", "panel", "ram_type", "m2_slots", "curved")
+    list_display = ("name", "brand", "screen_size", "resolution", "panel", "screen_type",
+                    "chipset", "ram_type", "m2_slots", "hdd_ports", "price")
+    list_filter = ("brand", "screen_size", "resolution", "panel", "screen_type",
+                   "chipset", "ram_type", "m2_slots", "hdd_ports")
+    # Nom avtomatik yig'iladi; eski (eskisa) va kiritilmaydigan maydonlar formada ko'rsatilmaydi.
+    exclude = ("name", "m2_nvme", "ddr5", "model_code", "note")
+    readonly_fields = ("socket_display",)
+    fieldsets = (
+        ("Asosiy", {"fields": ("brand", "color", "price")}),
+        ("Ekran", {"fields": ("screen_size", "resolution", "panel", "screen_type")}),
+        ("Platforma", {"fields": ("chipset", "socket_display", "ram_type", "m2_slots", "hdd_ports")}),
+        ("Qo'shimcha", {"fields": ("wifi", "bluetooth", "webcam")}),
+    )
+
+    @admin.display(description="CPU socket")
+    def socket_display(self, obj):
+        """Socket chipsetga qarab avtomatik ko'rsatiladi (tanlanishi bilan jonli yangilanadi)."""
+        socket = (obj.cpu_socket if obj else "") or "—"
+        return format_html(
+            '<span class="aio-socket" data-map="{}">{}</span>',
+            json.dumps(AIO_SOCKET_BY_CHIPSET),
+            socket,
+        )
+
+    class Media:
+        js = ("products/js/aio_socket.js",)
 
 
 @admin.register(GPU, site=admin_site)

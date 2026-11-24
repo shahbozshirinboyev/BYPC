@@ -67,6 +67,22 @@ h2{font:800 26px "Bricolage Grotesque",sans-serif;margin:2px 0 3px;letter-spacin
 .card .why{font:600 10px Onest,sans-serif;color:var(--bad);background:var(--bad-bg);border-radius:6px;padding:3px 6px;margin-top:6px;display:inline-block}
 .card .unsel{position:absolute;top:7px;right:8px;width:23px;height:23px;border:0;border-radius:7px;background:rgba(43,76,255,.14);color:var(--acc);font-size:15px;line-height:1;padding:0;cursor:pointer}
 .card .unsel:hover{background:var(--bad);color:var(--on-bad)}
+.cards.cards-aio{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.card-aio{flex-direction:row;align-items:center;gap:13px;padding:12px;min-height:0}
+.card-aio .aio-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.card-aio .brand{display:block}
+.card-aio .nm{margin:0}
+.card-aio .sp{margin:0}
+.card-aio .pr{margin:0}
+.aio-shot{position:relative;flex:none;width:104px;display:flex;flex-direction:column;align-items:center}
+.aio-frame{position:relative;width:104px;height:64px;border:2px solid var(--line);border-radius:8px;background:linear-gradient(135deg,rgba(43,76,255,.18),rgba(123,63,242,.12));display:grid;place-items:center;box-shadow:inset 0 0 0 3px var(--panel)}
+.aio-frame:before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 72% 18%,rgba(255,255,255,.6),transparent 55%)}
+.aio-frame:after{content:"";position:absolute;left:50%;bottom:-6px;width:34px;height:5px;border-radius:3px;background:var(--line);transform:translateX(-50%)}
+.aio-shot:after{content:"";width:56px;height:3px;border-radius:3px;background:var(--line);margin-top:8px}
+.aio-size{position:relative;z-index:1;font:800 22px "Bricolage Grotesque",sans-serif;color:var(--acc);line-height:1;letter-spacing:-.02em}
+.aio-size small{font-size:11px;vertical-align:top}
+.aio-panel{position:absolute;z-index:1;top:5px;right:7px;font:700 8px "JetBrains Mono",monospace;letter-spacing:.1em;color:var(--mute)}
+.aio-res{position:absolute;z-index:1;left:0;right:0;bottom:4px;text-align:center;font:700 8px "JetBrains Mono",monospace;letter-spacing:.03em;color:var(--mute)}
 .stageFoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
 .stageFoot button:disabled{opacity:.35;cursor:default}
 .hintline{font-size:12px;color:var(--mute)}
@@ -197,7 +213,7 @@ td button{padding:3px 8px;font-size:11px}
     <summary>Qismlar bog'liqligi — qaysi tanlov qaysi qismni cheklaydi</summary>
     <div class="linkgrid">
       <div><b>AIO → CPU</b><span>Chipset soketni belgilaydi: H61→LGA1155, H81→LGA1150, H410/H510→LGA1200, H610→LGA1700.</span></div>
-      <div><b>AIO → RAM</b><span>Monoblockdagi <code>ram_type</code> (DDR3 / DDR4 / DDR5) faqat shu turdagi xotirani qoldiradi.</span></div>
+      <div><b>AIO → RAM</b><span>AIO dagi <code>ram_type</code> (DDR3 / DDR4 / DDR5) faqat shu turdagi xotirani qoldiradi.</span></div>
       <div><b>AIO → SSD</b><span><code>m2_slots &gt; 0</code> bo'lsa NVMe ham, bo'lmasa faqat SATA SSD tanlanadi.</span></div>
       <div><b>CPU → MB</b><span>Protsessor soketi plata soketiga teng bo'lishi shart.</span></div>
       <div><b>MB → RAM</b><span>Plataning <code>ram_type</code> qiymati RAM turiga mos bo'lishi kerak.</span></div>
@@ -221,10 +237,11 @@ const MODE='{{ mode }}';
 const AIO_SOCKET={H61:'LGA1155',H81:'LGA1150',H410:'LGA1200',H510:'LGA1200',H610:'LGA1700'};
 const aioRam=a=>a.ram_type||(a.ddr5?'DDR5':'DDR4');
 const aioM2=a=>Number(a.m2_slots||(a.m2_nvme?1:0));
+const aioHdd=a=>Number(a.hdd_ports||0);
 const ROWS=MODE==='aio'?[
-  {k:'aio',t:'AIO',d:'Monoblock — ekran o‘lchami, chipset va xususiyatlar bo‘yicha tanlang',req:1},
-  {k:'cpu',t:'CPU',d:'Protsessor — monoblock chipsetiga mos soket bo‘yicha tanlanadi',req:1},
-  {k:'ram',t:'RAM',d:'Operativ xotira — monoblock DDR3 / DDR4 / DDR5 turiga qarab',req:1},
+  {k:'aio',t:'AIO',d:'AIO — ekran o‘lchami, chipset va xususiyatlar bo‘yicha tanlang',req:1},
+  {k:'cpu',t:'CPU',d:'Protsessor — AIO chipsetiga mos soket bo‘yicha tanlanadi',req:1},
+  {k:'ram',t:'RAM',d:'Operativ xotira — AIO DDR3 / DDR4 / DDR5 turiga qarab',req:1},
   {k:'ssd',t:'SSD',d:'Tez xotira — M.2 NVMe slot bor-yo‘qligiga qarab',req:1},
   {k:'kbm',t:'KB&M',d:'Klaviatura + sichqoncha — ulanish va tartib bo‘yicha',req:1},
 ]:[
@@ -278,10 +295,10 @@ function filterNote(k){
   const c=get('cpu'),m=get('mb'),cs=get('case'),n=needWatt();
   if(MODE==='aio'){
     const a=get('aio');
-    if(k==='aio')return 'MONOBLOCK — ekran, chipset va xususiyatlar bo‘yicha tanlang.';
-    if(!a)return 'Avval AIO (monoblock) ni tanlang.';
+    if(k==='aio')return 'AIO — ekran, chipset va xususiyatlar bo‘yicha tanlang.';
+    if(!a)return 'Avval AIO ni tanlang.';
     if(k==='cpu')return 'Chipset: '+a.chipset+(AIO_SOCKET[a.chipset]?' ('+AIO_SOCKET[a.chipset]+')':'')+'.';
-    if(k==='ram')return 'Faqat '+aioRam(a)+' — monoblock shu turdagi xotira bilan.';
+    if(k==='ram')return 'Faqat '+aioRam(a)+' — AIO shu turdagi xotira bilan.';
     if(k==='ssd')return aioM2(a)>0?('Barcha SSD (M.2 NVMe: '+aioM2(a)+' slot).'):'Faqat SATA SSD — M.2 NVMe slot yo‘q.';
     return 'Barcha mos variantlar ko‘rsatiladi.';
   }
@@ -295,7 +312,7 @@ function filterNote(k){
   return 'Barcha mos variantlar ko‘rsatiladi.';
 }
 function specs(k,x){
-  if(k==='aio')return [x.screen_size,x.panel,x.chipset,aioM2(x)?'M.2 x'+aioM2(x):'M.2 yo‘q',aioRam(x),x.curved?'Curved':'',x.wifi?'WiFi':'',x.webcam?'Webcam':'',x.model_code||''].filter(Boolean).join(' · ');
+  if(k==='aio')return [x.resolution,AIO_SOCKET[x.chipset]||'',aioM2(x)?'M.2 x'+aioM2(x):'M.2 yo‘q',aioHdd(x)?'HDD x'+aioHdd(x):'HDD port yo‘q',x.wifi?'WiFi':'',x.bluetooth?'Bluetooth':'',x.webcam?'Webcam':'',x.model_code||''].filter(Boolean).join(' · ');
   const f={cpu:['socket','cores','watt'],mb:['socket','ram_type','form_factor'],ram:['ram_type','capacity_gb','speed_mhz'],
    cool:['cooler_type','cooling_watt','height_mm'],gpu:['chipset','vram_gb','length_mm'],ssd:['interface','capacity_gb'],
    hdd:['form_factor','capacity_gb','rpm'],psu:['watt','efficiency'],case:['case_type','form_factors'],
@@ -306,9 +323,9 @@ function issues(){
   const c=get('cpu'),m=get('mb'),r=get('ram'),co=get('cool'),g=get('gpu'),s=get('ssd'),p=get('psu'),cs=get('case'),o=[];
   if(MODE==='aio'){
     const a=get('aio');
-    if(a&&c&&AIO_SOCKET[a.chipset]&&c.socket!==AIO_SOCKET[a.chipset])o.push(['bad','CPU soketi monoblock chipsetiga mos emas.']);
-    if(a&&r&&r.ram_type!==aioRam(a))o.push(['bad','RAM turi monoblockga mos emas (kerak: '+aioRam(a)+').']);
-    if(a&&s&&aioM2(a)===0&&s.interface==='NVMe')o.push(['bad','Monoblockda M.2 NVMe slot yo‘q.']);
+    if(a&&c&&AIO_SOCKET[a.chipset]&&c.socket!==AIO_SOCKET[a.chipset])o.push(['bad','CPU soketi AIO chipsetiga mos emas.']);
+    if(a&&r&&r.ram_type!==aioRam(a))o.push(['bad','RAM turi AIO ga mos emas (kerak: '+aioRam(a)+').']);
+    if(a&&s&&aioM2(a)===0&&s.interface==='NVMe')o.push(['bad','AIO da M.2 NVMe slot yo‘q.']);
     return o;
   }
   if(c&&m&&c.socket!==m.socket)o.push(['bad','CPU va MB soketlari mos emas.']);
@@ -332,10 +349,23 @@ function renderCards(){
   $('stepdesc').textContent=r.d;
   $('stepcnt').textContent=q?(list.length+' / '+ok.length+' topildi'):(ok.length+' ta mos');
   $('stephint').textContent=(r.o?'Qo‘shish tavsiya etiladi. ':'Majburiy. ')+filterNote(r.k);
-  $('cards').innerHTML=list.length?list.map(x=>'<div class="card '+(sel[r.k]===x.id?'sel':'')+'" data-id="'+x.id+'">'+
+  $('cards').classList.toggle('cards-aio',r.k==='aio');
+  $('cards').innerHTML=list.length?list.map(x=>{
+   if(r.k==='aio'){
+     const size=String(x.screen_size||'—').replace(/"/g,'');
+     return '<div class="card card-aio '+(sel.aio===x.id?'sel':'')+'" data-id="'+x.id+'">'+
+       (sel.aio===x.id?'<button class="unsel" data-unsel="1" title="Olib tashlash">×</button>':'')+
+       '<div class="aio-shot" aria-hidden="true"><div class="aio-frame"><span class="aio-size">'+size+'<small>"</small></span>'+
+       '<span class="aio-res">'+(x.resolution||'')+'</span>'+
+       '<span class="aio-panel">'+(x.panel||'IPS')+'</span></div></div>'+
+       '<div class="aio-info"><span class="nm">'+x.name+'</span>'+
+       '<span class="sp">'+specs('aio',x)+'</span><span class="pr">'+(x.price?money(x.price):'Narx yo‘q')+'</span></div></div>';
+   }
+   return '<div class="card '+(sel[r.k]===x.id?'sel':'')+'" data-id="'+x.id+'">'+
    (sel[r.k]===x.id?'<button class="unsel" data-unsel="1" title="Olib tashlash">×</button>':'')+'<span class="brand">'+(x.brand||'—')+'</span>'+
    '<span class="nm">'+x.name+'</span><span class="sp">'+specs(r.k,x)+'</span>'+
-   '<span class="pr">'+(r.k==='aio'&&!x.price?'Narx yo‘q':money(x.price))+'</span></div>').join(''):'<p class="hintline">Mos variant topilmadi — qidiruvni yoki oldingi tanlovni o\'zgartiring.</p>';
+   '<span class="pr">'+(r.k==='aio'&&!x.price?'Narx yo‘q':money(x.price))+'</span></div>';
+  }).join(''):'<p class="hintline">Mos variant topilmadi — qidiruvni yoki oldingi tanlovni o\'zgartiring.</p>';
   $('unselect').hidden=sel[r.k]==null;
   $('prev').disabled=step===0;$('next').textContent=step===ROWS.length-1?'Tugatish':'Keyingi →';
 }

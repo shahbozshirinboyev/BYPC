@@ -19,11 +19,27 @@ EFFICIENCY_CHOICES = [("None", "No certification"), ("80+ Bronze", "80+ Bronze")
                       ("80+ Gold", "80+ Gold"), ("80+ Platinum", "80+ Platinum")]
 COOLER_CHOICES = [("Air", "Havo"), ("Liquid", "Suvli")]
 AIO_CHIPSET_CHOICES = [("H61", "H61"), ("H81", "H81"), ("H410", "H410"),
-                       ("H510", "H510"), ("H610", "H610"), ("Other", "Boshqa")]
+                       ("H510", "H510"), ("H610", "H610")]
 AIO_SIZE_CHOICES = [('24"', '24"'), ('27"', '27"'), ('32"', '32"')]
-AIO_PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("—", "—")]
+AIO_PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("LED", "LED"), ("OLED", "OLED")]
+AIO_COLOR_CHOICES = [("white", "White"), ("black", "Black")]
+AIO_SOCKET_BY_CHIPSET = {
+    "H61": "LGA1155",
+    "H81": "LGA1150",
+    "H410": "LGA1200",
+    "H510": "LGA1200",
+    "H610": "LGA1700",
+}
+AIO_SCREEN_TYPE_CHOICES = [("flat", "Flat"), ("curved", "Curved")]
+AIO_RESOLUTION_CHOICES = [
+    ("1366x768", "HD (1366x768)"),
+    ("1920x1080", "Full HD (1920x1080)"),
+    ("2560x1440", "QHD (2560x1440)"),
+    ("3840x2160", "4K UHD (3840x2160)"),
+]
+AIO_SLOT_CHOICES = [(0, "0"), (1, "1"), (2, "2")]
 CASE_TYPE_CHOICES = [("Mini", "Mini-tower"), ("Mid", "Mid-tower"), ("Full", "Full-tower")]
-PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("OLED", "OLED")]
+PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("LED", "LED"), ("OLED", "OLED")]
 CONNECTION_CHOICES = [("Wired", "Simli"), ("Wireless", "Simsiz")]
 PRINTER_TYPE_CHOICES = [("Laser", "Laser"), ("Inkjet", "Siyohli"), ("LED", "LED")]
 PAPER_SIZE_CHOICES = [("A4", "A4"), ("A3", "A3"), ("A4+A3", "A4 + A3")]
@@ -33,7 +49,7 @@ class Component(models.Model):
     """Barcha qismlar uchun umumiy asos."""
     name = models.CharField("Nomi", max_length=200)
     price = models.DecimalField("Narxi (USD)", max_digits=10, decimal_places=2, default=0)
-    brand = models.CharField("Brend", max_length=50, blank=True, default="")
+    brand = models.CharField("Brend", max_length=30, blank=True, default="")
 
     class Meta:
         abstract = True
@@ -49,8 +65,8 @@ class CPU(Component):
     watt = models.PositiveIntegerField("Quvvat (W)", default=0)
 
     class Meta(Component.Meta):
-        verbose_name = "CPU"
-        verbose_name_plural = "CPU"
+        verbose_name = "CPUs"
+        verbose_name_plural = "CPUs"
         db_table = "builder_cpu"
 
 
@@ -91,24 +107,57 @@ class Cooler(Component):
 
 
 class AIO(Component):
-    """All-in-one monoblock kompyuterlar."""
+    """All-in-one (AIO) kompyuterlar."""
     screen_size = models.CharField("Ekran o'lchami", max_length=5, choices=AIO_SIZE_CHOICES, default='24"')
+    resolution = models.CharField("Ekran razmeri", max_length=12,
+                                  choices=AIO_RESOLUTION_CHOICES, default="1920x1080")
+    screen_type = models.CharField("Ekran turi", max_length=10,
+                                   choices=AIO_SCREEN_TYPE_CHOICES, default="flat")
     panel = models.CharField("Matritsa", max_length=5, choices=AIO_PANEL_CHOICES, default="IPS")
     chipset = models.CharField("Chipset", max_length=10, choices=AIO_CHIPSET_CHOICES, default="H610")
-    curved = models.BooleanField("Egri ekran", default=False)
     webcam = models.BooleanField("Veb-kamera", default=True)
     wifi = models.BooleanField("WiFi", default=True)
+    bluetooth = models.BooleanField("Bluetooth", default=False)
     m2_nvme = models.BooleanField("M.2 NVMe (eskisa)", default=False)
-    m2_slots = models.PositiveIntegerField("M.2 NVMe slotlari", default=0)
+    m2_slots = models.PositiveIntegerField("NVME M.2 Slot soni",
+                                           choices=AIO_SLOT_CHOICES, default=0)
+    hdd_ports = models.PositiveIntegerField("HDD port soni",
+                                            choices=AIO_SLOT_CHOICES, default=1)
     ram_type = models.CharField("RAM turi", max_length=10, choices=RAM_CHOICES, default="DDR4")
     ddr5 = models.BooleanField("DDR5 (eskisa)", default=False)
-    color = models.CharField("Rang", max_length=20, default="white")
+    color = models.CharField("Color", max_length=20, choices=AIO_COLOR_CHOICES, default="white")
     model_code = models.CharField("Model kodi", max_length=30, blank=True, default="")
     note = models.CharField("Izoh", max_length=100, blank=True, default="")
 
+    @property
+    def cpu_socket(self):
+        """CPU soketi chipsetdan avtomatik aniqlanadi (yagona manba — chipset)."""
+        return AIO_SOCKET_BY_CHIPSET.get(self.chipset, "")
+
+    def build_name(self):
+        """Qisqa nom: brend, ekran, chipset, RAM va rang (qolgani kartochkada pastda)."""
+        panel = self.panel if self.panel and self.panel != "—" else ""
+        parts = [
+            self.brand,
+            self.screen_size,
+            panel,
+            self.get_screen_type_display() if self.screen_type else "",
+            self.chipset,
+            self.ram_type,
+            self.get_color_display() if self.color else "",
+        ]
+        return " ".join(p for p in parts if p).strip()[:200] or "AIO"
+
+    def save(self, *args, **kwargs):
+        self.name = self.build_name()
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"name"})
+        super().save(*args, **kwargs)
+
     class Meta(Component.Meta):
-        verbose_name = "AIO (monoblock)"
-        verbose_name_plural = "AIO (Моноблоки)"
+        verbose_name = "AIOs"
+        verbose_name_plural = "AIOs"
         db_table = "builder_aio"
 
 

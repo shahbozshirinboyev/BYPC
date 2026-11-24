@@ -32,7 +32,7 @@ python manage.py runserver
 
 - Kirish sahifasi: http://127.0.0.1:8000/
 - To'liq kalkulyator: http://127.0.0.1:8000/pc-assembly/ — 12 bosqich
-- AIO hisobi: http://127.0.0.1:8000/aio-assembly/ — 5 bosqich (AIO monoblock → CPU → RAM → SSD → KB&M)
+- AIO hisobi: http://127.0.0.1:8000/aio-assembly/ — 5 bosqich (AIO → CPU → RAM → SSD → KB&M)
 - Monitorlar katalogi: http://127.0.0.1:8000/monitors/
 - Printerlar katalogi: http://127.0.0.1:8000/printers/
 - Kirish / ro'yxatdan o'tish: `/login/`, `/register/`
@@ -66,7 +66,7 @@ Rol foydalanuvchining `Profile.role` maydonida saqlanadi va admin paneli → **P
 Moslik qoidalari kalkulyatorning pastidagi **"Qismlar bog'liqligi"** bo'limida yozilgan. Asosiylari:
 
 - **AIO → CPU** — chipset soketni belgilaydi: `H61→LGA1155`, `H81→LGA1150`, `H410/H510→LGA1200`, `H610→LGA1700`;
-- **AIO → RAM** — monoblockning `ram_type` maydoni (**DDR3 / DDR4 / DDR5**) faqat shu turdagi xotirani qoldiradi;
+- **AIO → RAM** — AIO ning `ram_type` maydoni (**DDR3 / DDR4 / DDR5**) faqat shu turdagi xotirani qoldiradi;
 - **AIO → SSD** — `m2_slots > 0` bo'lsa NVMe ham, bo'lmasa faqat SATA SSD;
 - **CPU → MB** — soket mos bo'lishi shart;
 - **MB → RAM** — plata `ram_type` ga mos xotira;
@@ -111,7 +111,7 @@ Savat hali ham server sessionida saqlanadi (mijoz tomonidagi `localStorage` emas
 
 Admin panel uchta bo'limga ajratilgan:
 
-- **MAHSULOTLAR** — faqat mahsulotlar: CPU, AIO (Моноблоки), MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&M, HEADSET;
+- **PRODUCTS** — faqat mahsulotlar: CPUs, AIOs, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&M, HEADSET;
 - **YIG'ISH SOZLAMALARI** — PC va AIO sozlamalari hamda hisob tarixi: `PC ASSEMBLY SETTINGS`, `PC CALCULATIONS`, `AIO ASSEMBLY SETTINGS`, `AIO CALCULATIONS`;
 - **BUYURTMALAR VA SOZLAMALAR** — BUYURTMALAR (ichida BUYURTMA QATORLARI), PROFILLAR, SAVED BUILDS, SETTINGS.
 

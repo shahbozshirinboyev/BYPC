@@ -32,7 +32,7 @@ FIELDS = {
     "mb": (Motherboard, "id name price brand socket ram_type form_factor m2_slots"),
     "ram": (RAM, "id name price brand ram_type capacity_gb speed_mhz"),
     "cool": (Cooler, "id name price brand cooler_type sockets cooling_watt height_mm"),
-    "aio": (AIO, "id name price brand screen_size panel chipset ram_type m2_slots curved webcam wifi color model_code note"),
+    "aio": (AIO, "id name price brand screen_size resolution screen_type panel chipset ram_type m2_slots hdd_ports webcam wifi bluetooth color model_code note"),
     "gpu": (GPU, "id name price brand chipset vram_gb watt length_mm"),
     "ssd": (SSD, "id name price brand interface capacity_gb"),
     "hdd": (HDD, "id name price brand form_factor capacity_gb rpm"),

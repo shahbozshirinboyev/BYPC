@@ -57,7 +57,7 @@ body{margin:0;padding-top:72px;background:var(--bg);color:var(--ink);font:400 14
   <section class="hero">
     <span class="eyebrow">BUILD YOUR PC · KALKULYATOR</span>
     <h1>Kompyuteringizni <em>o'zingiz</em> yig'ing</h1>
-    <p>Mos qismlarni tanlang, narxni ko'ring va xatoliklardan saqlaning. PC yig'masi, AIO monoblock, monitor va printerlar — hammasi bir joyda.</p>
+    <p>Mos qismlarni tanlang, narxni ko'ring va xatoliklardan saqlaning. PC yig'masi, AIO, monitor va printerlar — hammasi bir joyda.</p>
     <div class="cta">
       <a class="primary" href="{% url 'pc_assembly' %}">PC assembly ga o'tish →</a>
       <a class="ghost" href="{% url 'aio_assembly' %}">AIO assembly ni sinash</a>
@@ -77,9 +77,9 @@ body{margin:0;padding-top:72px;background:var(--bg);color:var(--ink);font:400 14
     <a class="card" href="{% url 'aio_assembly' %}">
       <span class="badge">TEZ</span>
       <span class="num">02 / AIO ASSEMBLY</span>
-      <h3>AIO monoblock asosida yig'ma</h3>
-      <p>Faqat 5 bosqich: AIO monoblock, CPU, RAM, SSD va KB&amp;M. Chipset, DDR4/DDR5 va M.2 NVMe xususiyatlari hisobga olinadi.</p>
-      <div class="chips"><span>5 bosqich</span><span>monoblock</span><span>oddiy hisob</span></div>
+      <h3>AIO asosida yig'ma</h3>
+      <p>Faqat 5 bosqich: AIO, CPU, RAM, SSD va KB&amp;M. Chipset, DDR4/DDR5 va M.2 NVMe xususiyatlari hisobga olinadi.</p>
+      <div class="chips"><span>5 bosqich</span><span>AIO</span><span>oddiy hisob</span></div>
       <span class="go">AIO hisobini ochish →</span>
     </a>
     <a class="card" href="{% url 'monitors' %}">
@@ -103,7 +103,7 @@ body{margin:0;padding-top:72px;background:var(--bg);color:var(--ink);font:400 14
   <div class="stats">
     <div class="stat"><b>12</b><span>PC assembly bosqichi</span></div>
     <div class="stat"><b>5</b><span>AIO assembly bosqichi</span></div>
-    <div class="stat"><b>{{ aio_count }}</b><span>AIO monoblock</span></div>
+    <div class="stat"><b>{{ aio_count }}</b><span>AIO</span></div>
     <div class="stat"><b>{{ total_parts }}</b><span>Jami katalog qismi</span></div>
   </div>
 

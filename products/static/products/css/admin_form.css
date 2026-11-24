@@ -1,0 +1,19 @@
+/* Mahsulot admin formalarida barcha matn maydonlari va select'lar bir xil kenglikda. */
+.change-form .form-row input[type="text"],
+.change-form .form-row input[type="number"],
+.change-form .form-row input[type="email"],
+.change-form .form-row input[type="url"],
+.change-form .form-row input[type="password"],
+.change-form .form-row select,
+.change-form .form-row textarea,
+.add-form .form-row input[type="text"],
+.add-form .form-row input[type="number"],
+.add-form .form-row input[type="email"],
+.add-form .form-row input[type="url"],
+.add-form .form-row input[type="password"],
+.add-form .form-row select,
+.add-form .form-row textarea {
+  width: 180px;
+  max-width: 100%;
+  box-sizing: border-box;
+}

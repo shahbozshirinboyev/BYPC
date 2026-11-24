@@ -7,8 +7,8 @@
     {% with u=request.resolver_match.url_name %}
     <nav class="nav-links" aria-label="Asosiy menyu">
       <a href="{% url 'home' %}" class="{% if active_menu == 'home' %}on{% endif %}">Bosh sahifa</a>
-      <a href="{% url 'pc_assembly' %}" class="{% if active_menu == 'pc' %}on{% endif %}">PC</a>
       <a href="{% url 'aio_assembly' %}" class="{% if active_menu == 'aio' %}on{% endif %}">AIO</a>
+      <a href="{% url 'pc_assembly' %}" class="{% if active_menu == 'pc' %}on{% endif %}">PC</a>
       <a href="{% url 'monitors' %}" class="{% if active_menu == 'monitors' %}on{% endif %}">Monitors</a>
       <a href="{% url 'printers' %}" class="{% if active_menu == 'printers' %}on{% endif %}">Printers</a>
       <a href="{% url 'orders_list' %}" class="{% if active_menu == 'orders' %}on{% endif %}">Buyurtmalar</a>
@@ -78,13 +78,13 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
               <span>Bosh sahifa</span>
             </a>
-            <a class="nm-item{% if active_menu == 'pc' %} on{% endif %}" href="{% url 'pc_assembly' %}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
-              <span>PC</span>
-            </a>
             <a class="nm-item{% if active_menu == 'aio' %} on{% endif %}" href="{% url 'aio_assembly' %}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 7h10"/></svg>
               <span>AIO</span>
+            </a>
+            <a class="nm-item{% if active_menu == 'pc' %} on{% endif %}" href="{% url 'pc_assembly' %}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+              <span>PC</span>
             </a>
             <a class="nm-item{% if active_menu == 'monitors' %} on{% endif %}" href="{% url 'monitors' %}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></svg>

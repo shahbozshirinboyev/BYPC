@@ -24,6 +24,7 @@ CPU_MEMORY_TYPE_CHOICES = [
 CPU_GPU_CHOICES = [
     ("", "None"),
     ("Intel HD Graphics 2000", "Intel HD Graphics 2000"),
+    ("Intel HD Graphics 2500", "Intel HD Graphics 2500"),
     ("Intel HD Graphics 3000", "Intel HD Graphics 3000"),
     ("Intel HD Graphics 4000", "Intel HD Graphics 4000"),
     ("Intel HD Graphics 4600", "Intel HD Graphics 4600"),

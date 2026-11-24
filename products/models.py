@@ -16,6 +16,8 @@ SOCKET_CHOICES = [
     ("AM4", "AM4"), ("AM5", "AM5"),
 ]
 RAM_CHOICES = [("DDR3", "DDR3"), ("DDR4", "DDR4"), ("DDR5", "DDR5")]
+RAM_FORM_CHOICES = [("DIMM", "DIMM"), ("SODIMM", "SODIMM")]
+RAM_MODULE_CHOICES = [(1, "1 ta"), (2, "2 ta")]
 CPU_MEMORY_TYPE_CHOICES = [
     ("", "—"),
     ("DDR3", "DDR3"), ("DDR4", "DDR4"), ("DDR5", "DDR5"),
@@ -124,12 +126,45 @@ class Motherboard(Component):
 
 class RAM(Component):
     ram_type = models.CharField("RAM turi", max_length=10, choices=RAM_CHOICES, blank=True)
-    capacity_gb = models.PositiveIntegerField("Hajmi (GB)", default=0)
+    capacity_gb = models.PositiveIntegerField("Umumiy hajmi (GB)", default=0)
     speed_mhz = models.PositiveIntegerField("Tezligi (MHz)", default=0)
+    modules = models.PositiveSmallIntegerField("Modullar soni", choices=RAM_MODULE_CHOICES, default=1)
+    form_factor = models.CharField("Form-faktor", max_length=8, choices=RAM_FORM_CHOICES, default="DIMM")
+    cl = models.PositiveSmallIntegerField("CL (kechikish)", null=True, blank=True)
+    radiator = models.BooleanField("Radiator", default=False)
+    long_dimm = models.BooleanField("Long DIMM", default=False)
+    rgb = models.BooleanField("RGB", default=False)
+    note = models.CharField("Izoh", max_length=80, blank=True, default="")
+
+    def build_name(self):
+        """Nom xususiyatlardan yig'iladi: brend + hajm + tur + tezlik + ..."""
+        per = self.capacity_gb // self.modules if self.modules and self.capacity_gb else self.capacity_gb
+        kit = str(per) + 'x' + str(self.modules) if self.modules == 2 and per else ""
+        parts = [
+            self.brand,
+            str(self.capacity_gb) + 'GB' if self.capacity_gb else "",
+            self.ram_type,
+            str(self.speed_mhz) + 'MHz' if self.speed_mhz else "",
+            kit,
+            'SODIMM' if self.form_factor == 'SODIMM' else "",
+            'CL' + str(self.cl) if self.cl else "",
+            'Radiator' if self.radiator else "",
+            'LongDIMM' if self.long_dimm else "",
+            'RGB' if self.rgb else "",
+            self.note,
+        ]
+        return " ".join(p for p in parts if p).strip()[:200] or "RAM"
+
+    def save(self, *args, **kwargs):
+        self.name = self.build_name()
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"name"})
+        super().save(*args, **kwargs)
 
     class Meta(Component.Meta):
         verbose_name = "RAM"
-        verbose_name_plural = "RAM"
+        verbose_name_plural = "RAMs"
         db_table = "builder_ram"
 
 

@@ -30,7 +30,7 @@ from .templatetags.bypc_tags import phone_format
 FIELDS = {
     "cpu": (CPU, "id name price brand socket cores threads max_turbo_ghz cache base_power_w max_turbo_power_w memory_types memory_speed gpu_name watt"),
     "mb": (Motherboard, "id name price brand socket ram_type form_factor m2_slots"),
-    "ram": (RAM, "id name price brand ram_type capacity_gb speed_mhz"),
+    "ram": (RAM, "id name price brand ram_type capacity_gb speed_mhz modules form_factor cl radiator long_dimm rgb note"),
     "cool": (Cooler, "id name price brand cooler_type sockets cooling_watt height_mm"),
     "aio": (AIO, "id name price brand screen_size resolution screen_type panel chipset ram_type m2_slots hdd_ports webcam wifi bluetooth color model_code note"),
     "gpu": (GPU, "id name price brand chipset vram_gb watt length_mm"),

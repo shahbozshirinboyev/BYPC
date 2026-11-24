@@ -52,8 +52,22 @@ class MotherboardAdmin(BaseAdmin):
 
 @admin.register(RAM, site=admin_site)
 class RAMAdmin(BaseAdmin):
-    list_display = ("name", "brand", "ram_type", "capacity_gb", "speed_mhz", "price")
-    list_filter = ("brand", "ram_type", "capacity_gb", "speed_mhz")
+    # Nom xususiyatlardan avtomatik yig'iladi (AIO kabi).
+    # CL, Long DIMM va Izoh formada ko'rsatilmaydi.
+    exclude = ("name", "cl", "long_dimm", "note")
+    list_display = ("name_display", "brand", "ram_type", "capacity_gb", "speed_mhz",
+                    "modules", "form_factor", "price")
+    list_filter = ("brand", "ram_type", "capacity_gb", "speed_mhz", "modules",
+                   "form_factor", "rgb", "radiator")
+    fieldsets = (
+        ("Asosiy", {"fields": ("brand", "ram_type", "price")}),
+        ("Xususiyatlar", {"fields": ("capacity_gb", "modules", "speed_mhz", "form_factor")}),
+        ("Tashqi ko‘rinish", {"fields": ("radiator", "rgb")}),
+    )
+
+    @admin.display(description="Name", ordering="name")
+    def name_display(self, obj):
+        return obj.name
 
 
 @admin.register(Cooler, site=admin_site)

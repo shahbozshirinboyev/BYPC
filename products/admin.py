@@ -156,8 +156,13 @@ class MonitorAdmin(BaseAdmin):
 
 @admin.register(KeyboardMouse, site=admin_site)
 class KeyboardMouseAdmin(BaseAdmin):
-    list_display = ("name", "brand", "connection", "layout", "price")
-    list_filter = ("brand", "connection", "layout")
+    list_display = ("name", "brand", "connection", "layout", "lighting", "switch_type", "color", "price")
+    list_filter = ("brand", "connection", "layout", "lighting", "switch_type", "color")
+    exclude = ("name", "model_code", "bundle_type")
+    fieldsets = (
+        ("Asosiy", {"fields": ("brand", "price")}),
+        ("Xususiyatlar", {"fields": ("connection", "layout", "lighting", "switch_type", "color")}),
+    )
 
 
 @admin.register(Headset, site=admin_site)

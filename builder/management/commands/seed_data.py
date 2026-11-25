@@ -114,7 +114,8 @@ DATA = {
         ("Brother DCP-L2540DW", 260, {"brand": "Brother", "printer_type": "LED", "connection": "Wireless", "paper_size": "A4", "color_print": False, "duplex": True, "speed_ppm": 30}),
     ],
     KeyboardMouse: [
-        ("Metoo C20 simsiz komplekt, oq", 8, {"brand": "Metoo", "connection": "Wireless", "layout": "UZ/RU/EN"}),
+        ("", 8, {"brand": "Metoo", "model_code": "C20", "bundle_type": "combo", "connection": "Wireless",
+                "layout": "EN/RU", "lighting": "none", "switch_type": "membrane", "color": "white"}),
     ],
     Headset: [
         ("Genesis Radium 300 (3.5 mm)", 18, {"brand": "Genesis", "connection": "Wired", "surround": False}),

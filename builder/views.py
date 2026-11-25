@@ -40,7 +40,7 @@ FIELDS = {
     "case": (Case, "id name price brand case_type form_factors max_gpu_length max_cooler_height"),
     "mon": (Monitor, "id name price brand panel size_inch refresh_hz"),
     "printer": (Printer, "id name price brand printer_type connection paper_size color_print duplex speed_ppm"),
-    "kbm": (KeyboardMouse, "id name price brand connection layout"),
+    "kbm": (KeyboardMouse, "id name price brand connection layout lighting switch_type color"),
     "head": (Headset, "id name price brand connection surround"),
 }
 
@@ -286,6 +286,17 @@ def _can_set_status(role, user, order, target):
     return target in {order.status, "NEW", "AGREED", "QUEUED", "CANCELLED"}
 
 
+def _cart_line_spec(kind, item):
+    if kind == "kbm":
+        parts = [
+            (getattr(item, "layout", "") or "").replace("/", "-"),
+            ("Switch: " + item.get_switch_type_display()) if getattr(item, "switch_type", "") else "",
+            ("Light: " + item.get_lighting_display()) if getattr(item, "lighting", "") else "",
+        ]
+        return " · ".join(p for p in parts if p)
+    return ""
+
+
 def _cart_with_live_prices(cart):
     """Savat narxlarini sessionga emas, bazaga qarab qayta hisoblaydi."""
     result, errors = [], []
@@ -303,7 +314,8 @@ def _cart_with_live_prices(cart):
         price = Decimal(str(item.price))
         result.append({"kind": key, "id": item.id, "name": item.name,
                        "price": float(price), "qty": qty,
-                       "line_total": float(price * qty)})
+                       "line_total": float(price * qty),
+                       "spec": _cart_line_spec(key, item)})
     return result, errors
 
 

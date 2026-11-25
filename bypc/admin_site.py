@@ -7,7 +7,7 @@ APP_ORDER = ["products", "assembly", "builder", "auth"]
 MODEL_ORDER = {
     "products": [
         "CPUs", "AIOs", "MB", "RAM", "COOLER", "GPU", "SSD", "HDD",
-        "PSU", "CASE", "MONITOR", "PRINTER", "KB&M", "HEADSET",
+        "PSU", "CASE", "MONITOR", "PRINTER", "KB&Ms", "HEADSET",
     ],
     "assembly": [
         "PC ASSEMBLY SETTINGS", "PC CALCULATIONS",

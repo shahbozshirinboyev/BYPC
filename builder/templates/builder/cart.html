@@ -4,8 +4,10 @@
 .grid2{display:grid;grid-template-columns:1fr 420px;gap:16px;align-items:start}
 @media(max-width:1000px){.grid2{grid-template-columns:1fr}}
 .cartrow{display:flex;gap:10px;align-items:start;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}
-.cartrow .nm{flex:1}
-.cartrow b{font-family:"JetBrains Mono",monospace;white-space:nowrap}
+.cartrow .nm{flex:1;min-width:0}
+.cartrow .nm .title{display:block;font:600 13px/1.35 Onest,sans-serif;color:var(--ink)}
+.cartrow .nm .spec{display:block;color:var(--mute);margin-top:5px;font:500 11px/1.5 "JetBrains Mono",monospace}
+.cartrow b{font:800 16px/1 "Bricolage Grotesque",sans-serif;white-space:nowrap;color:var(--acc);padding-top:1px}
 .total{display:flex;justify-content:space-between;font:800 18px "Bricolage Grotesque",sans-serif;padding:14px 0}
 .orderform label{margin-top:9px}
 .orderform textarea{min-height:70px;resize:vertical}
@@ -24,7 +26,10 @@
     {% if cart %}
       {% for i in cart %}
       <div class="cartrow">
-        <span class="nm">{{ i.name }} <small style="color:var(--mute)">× {{ i.qty }}</small></span>
+        <span class="nm">
+          <span class="title">{{ i.name }} <small style="color:var(--mute);font:600 11px 'JetBrains Mono',monospace">× {{ i.qty }}</small></span>
+          {% if i.spec %}<span class="spec">{{ i.spec }}</span>{% endif %}
+        </span>
         <b>${{ i.line_total|floatformat:0 }}</b>
         <form method="post">{% csrf_token %}<input type="hidden" name="action" value="remove"><input type="hidden" name="index" value="{{ forloop.counter0 }}"><button class="btn small ghost" type="submit">×</button></form>
       </div>

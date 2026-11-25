@@ -74,6 +74,16 @@ AIO_SLOT_CHOICES = [(0, "0"), (1, "1"), (2, "2")]
 CASE_TYPE_CHOICES = [("Mini", "Mini-tower"), ("Mid", "Mid-tower"), ("Full", "Full-tower")]
 PANEL_CHOICES = [("IPS", "IPS"), ("VA", "VA"), ("TN", "TN"), ("LED", "LED"), ("OLED", "OLED")]
 CONNECTION_CHOICES = [("Wired", "Simli"), ("Wireless", "Simsiz")]
+KBM_CONNECTION_CHOICES = [("Wired", "Wired"), ("Wireless", "Wireless")]
+KBM_LAYOUT_CHOICES = [("EN", "EN"), ("RU", "RU"), ("EN-RU", "EN-RU")]
+KBM_LIGHTING_CHOICES = [("none", "None"), ("single", "Single Color"), ("rgb", "RGB")]
+KBM_SWITCH_CHOICES = [
+    ("membrane", "Membrane"),
+    ("scissor", "Scissor"),
+    ("semi-mechanical", "Semi-mechanical"),
+    ("mechanical", "Mechanical"),
+]
+KBM_COLOR_CHOICES = [("white", "White"), ("black", "Black"), ("gray", "Gray")]
 PRINTER_TYPE_CHOICES = [("Laser", "Laser"), ("Inkjet", "Siyohli"), ("LED", "LED")]
 PAPER_SIZE_CHOICES = [("A4", "A4"), ("A3", "A3"), ("A4+A3", "A4 + A3")]
 
@@ -349,12 +359,39 @@ class Printer(Component):
 
 
 class KeyboardMouse(Component):
-    connection = models.CharField("Ulanish", max_length=10, choices=CONNECTION_CHOICES, default="Wired")
-    layout = models.CharField("Tartib", max_length=20, default="UZ/RU/EN")
+    # legacy fields kept for DB compatibility
+    model_code = models.CharField("Model", max_length=60, blank=True, default="")
+    bundle_type = models.CharField("Turi/To'plam", max_length=20, blank=True, default="combo")
+
+    connection = models.CharField("Ulanish", max_length=10, choices=KBM_CONNECTION_CHOICES, default="Wired")
+    layout = models.CharField("Layout", max_length=10, choices=KBM_LAYOUT_CHOICES, default="EN-RU")
+    lighting = models.CharField("Yoritish", max_length=15, choices=KBM_LIGHTING_CHOICES, default="none")
+    switch_type = models.CharField("Switch turi", max_length=20, choices=KBM_SWITCH_CHOICES, default="membrane")
+    color = models.CharField("Rangi", max_length=20, choices=KBM_COLOR_CHOICES, blank=True, default="")
+
+    def build_name(self):
+        parts = [
+            (self.brand or "").strip(),
+            (self.model_code or "").strip(),
+            self.get_connection_display(),
+            self.get_color_display(),
+        ]
+        out = []
+        for p in parts:
+            if p and p not in out:
+                out.append(p)
+        return " ".join(out).strip()[:200] or "KB&Ms"
+
+    def save(self, *args, **kwargs):
+        self.name = self.build_name()
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = list(set(update_fields) | {"name"})
+        super().save(*args, **kwargs)
 
     class Meta(Component.Meta):
-        verbose_name = "KB&M"
-        verbose_name_plural = "KB&M"
+        verbose_name = "KB&Ms"
+        verbose_name_plural = "KB&Ms"
         db_table = "builder_keyboardmouse"
 
 

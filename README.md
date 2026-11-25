@@ -4,7 +4,7 @@ Zamonaviy, sodda PC yig'ish kalkulyatori va qismlar katalogi. Asl HTML fayli o'r
 
 ## Loyiha tuzilishi
 
-- **`products/`** — faqat katalog mahsulotlari: CPU, AIO, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&M, HEADSET.
+- **`products/`** — faqat katalog mahsulotlari: CPU, AIO, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&Ms, HEADSET.
 - **`assembly/`** — PC va AIO uchun yig'ish sozlamalari hamda hisob-kitob tarixi (`PC ASSEMBLY SETTINGS`, `PC CALCULATIONS`, `AIO ASSEMBLY SETTINGS`, `AIO CALCULATIONS`).
 - **`builder/`** — buyurtmalar, profillar, saqlangan yig'malar, umumiy sozlamalar va sayt sahifalari.
 
@@ -32,7 +32,7 @@ python manage.py runserver
 
 - Kirish sahifasi: http://127.0.0.1:8000/
 - To'liq kalkulyator: http://127.0.0.1:8000/pc-assembly/ — 12 bosqich
-- AIO hisobi: http://127.0.0.1:8000/aio-assembly/ — 5 bosqich (AIO → CPU → RAM → SSD → KB&M)
+- AIO hisobi: http://127.0.0.1:8000/aio-assembly/ — 5 bosqich (AIO → CPU → RAM → SSD → KB&Ms)
 - Monitorlar katalogi: http://127.0.0.1:8000/monitors/
 - Printerlar katalogi: http://127.0.0.1:8000/printers/
 - Kirish / ro'yxatdan o'tish: `/login/`, `/register/`
@@ -111,7 +111,7 @@ Savat hali ham server sessionida saqlanadi (mijoz tomonidagi `localStorage` emas
 
 Admin panel uchta bo'limga ajratilgan:
 
-- **PRODUCTS** — faqat mahsulotlar: CPUs, AIOs, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&M, HEADSET;
+- **PRODUCTS** — faqat mahsulotlar: CPUs, AIOs, MB, RAM, COOLER, GPU, SSD, HDD, PSU, CASE, MONITOR, PRINTER, KB&Ms, HEADSET;
 - **YIG'ISH SOZLAMALARI** — PC va AIO sozlamalari hamda hisob tarixi: `PC ASSEMBLY SETTINGS`, `PC CALCULATIONS`, `AIO ASSEMBLY SETTINGS`, `AIO CALCULATIONS`;
 - **BUYURTMALAR VA SOZLAMALAR** — BUYURTMALAR (ichida BUYURTMA QATORLARI), PROFILLAR, SAVED BUILDS, SETTINGS.
 
